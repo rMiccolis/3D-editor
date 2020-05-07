@@ -6,18 +6,18 @@ const DRAG_NOTICE = document.getElementById('js-drag-notice');
 
 
 
-function startup() {
-  var el = document.getElementById("canvas");
-  if (el) {
-    el.addEventListener("touchstart", selectOption);
-    el.addEventListener("touchend", selectOption);
-    el.addEventListener("touchcancel", selectOption);
-    el.addEventListener("touchmove", selectOption);
-  }
+// function startup() {
+//   var el = document.getElementById("canvas");
+//   if (el) {
+//     el.addEventListener("touchstart", selectOption);
+//     el.addEventListener("touchend", selectOption);
+//     el.addEventListener("touchcancel", selectOption);
+//     el.addEventListener("touchmove", selectOption);
+//   }
 
-}
+// }
 
-document.addEventListener("DOMContentLoaded", startup);
+// document.addEventListener("DOMContentLoaded", startup);
 
 
 var theModel;
@@ -205,29 +205,29 @@ let add_click_touch = function (object) {
   while (i < selectedPlaces.length) {
 
     if (selectedPlaces[i].place == object.nameID) {
-      for (opt of options) {
+      // for (opt of options) {
+      //   if (opt.classList.contains(object.nameID)) {
+      //     temp = opt;
+      //   }
+      // }
 
-        if (opt.classList.contains(object.nameID)) {
-          temp = opt;
-        }
-      }
-      for (opt of options2) {
-        if (opt.classList.contains(object.nameID)) {
-          temp = opt;
-        }
-      }
+      // for (opt of options2) {
+      //   if (opt.classList.contains(object.nameID)) {
+      //     temp = opt;
+      //   }
+      // }
 
       if (selectedPlaces[i].activated == true) {
         selectedPlaces[i].activated = false;
-        temp.classList.remove('--is-activated');
+        //temp.classList.remove('--is-activated');
         activated--;
-        temp.classList.add('hide');
+        //temp.classList.add('hide');
         setMaterial(theModel, object.nameID, INITIAL_MTL);
       } else {
         selectedPlaces[i].activated = true;
-        temp.classList.add('--is-activated');
+        //temp.classList.add('--is-activated');
         activated++;
-        temp.classList.remove('hide');
+        //temp.classList.remove('hide');
         setMaterial(theModel, object.nameID, new_mtl);
       }
       break;
@@ -370,66 +370,66 @@ function resizeRendererToDisplaySize(renderer) {
 // buildColors(colors);
 
 // Select Option
-const options = document.querySelectorAll(".option");
-const options2 = document.querySelectorAll(".option2");
+// const options = document.querySelectorAll(".option");
+// const options2 = document.querySelectorAll(".option2");
 
-for (const option of options) {
-  option.addEventListener('click', selectOption);
-  //option.addEventListener('contextmenu', unsetColor);
-}
-for (const option of options2) {
-  option.addEventListener('click', selectOption);
-  //option.addEventListener('contextmenu', unsetColor);
-}
+// for (const option of options) {
+//   option.addEventListener('click', selectOption);
+//   //option.addEventListener('contextmenu', unsetColor);
+// }
+// for (const option of options2) {
+//   option.addEventListener('click', selectOption);
+//   //option.addEventListener('contextmenu', unsetColor);
+// }
 
 
-function selectOption(e) {
-  let option = e.target;
-  let activeOption2 = activeOption;
-  activeOption = e.target.dataset.option;
+// function selectOption(e) {
+//   let option = e.target;
+//   let activeOption2 = activeOption;
+//   activeOption = e.target.dataset.option;
 
-  let i = 0;
-  let j = i;
-  for (const otherOption of options) {
-    otherOption.classList.remove('--is-active');
-    //salvo la posizione all'interno dell'array selectedPlaces dell'elemento cliccato
-    if (selectedPlaces[i].place == activeOption) {
-      j = i;
-    }
-    i++;
-  }
-  //deseleziono l'area che l'utente sta ricliccando e lo disattivo nel vettore
-  if (activeOption2 == activeOption) {
-    setMaterial(theModel, activeOption, INITIAL_MTL);
+//   let i = 0;
+//   let j = i;
+//   for (const otherOption of options) {
+//     otherOption.classList.remove('--is-active');
+//     //salvo la posizione all'interno dell'array selectedPlaces dell'elemento cliccato
+//     if (selectedPlaces[i].place == activeOption) {
+//       j = i;
+//     }
+//     i++;
+//   }
+//   //deseleziono l'area che l'utente sta ricliccando e lo disattivo nel vettore
+//   if (activeOption2 == activeOption) {
+//     setMaterial(theModel, activeOption, INITIAL_MTL);
 
-    option.classList.remove('--is-activated');
-    activated--;
-    option.classList.add('hide');
-    //activeOption = null;
-    selectedPlaces[j].activated = false;
-    setMaterial(theModel, activeOption, INITIAL_MTL);
-  } else if (option.classList.contains('--is-activated')) {
-    option.classList.remove('--is-activated');
-    activated--;
-    option.classList.add('hide');
-    selectedPlaces[j].activated = false;
-    setMaterial(theModel, activeOption, INITIAL_MTL);
-  } else {
+//     option.classList.remove('--is-activated');
+//     activated--;
+//     option.classList.add('hide');
+//     //activeOption = null;
+//     selectedPlaces[j].activated = false;
+//     setMaterial(theModel, activeOption, INITIAL_MTL);
+//   } else if (option.classList.contains('--is-activated')) {
+//     option.classList.remove('--is-activated');
+//     activated--;
+//     option.classList.add('hide');
+//     selectedPlaces[j].activated = false;
+//     setMaterial(theModel, activeOption, INITIAL_MTL);
+//   } else {
 
-    //seleziono l'elemento scelto e lo attivo nel vettore
+//     //seleziono l'elemento scelto e lo attivo nel vettore
 
-    option.classList.add('--is-activated');
-    activated++;
-    option.classList.remove('hide');
-    selectedPlaces[j].activated = true;
-    new_mtl = new THREE.MeshPhongMaterial({
-      color: parseInt('0x00FE32'),
-      shininess: 10
-    });
-    setMaterial(theModel, activeOption, new_mtl);
-  }
+//     option.classList.add('--is-activated');
+//     activated++;
+//     option.classList.remove('hide');
+//     selectedPlaces[j].activated = true;
+//     new_mtl = new THREE.MeshPhongMaterial({
+//       color: parseInt('0x00FE32'),
+//       shininess: 10
+//     });
+//     setMaterial(theModel, activeOption, new_mtl);
+//   }
 
-}
+// }
 
 var domEvents = new THREEx.DomEvents(camera, renderer.domElement);
 
