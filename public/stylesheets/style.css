@@ -95,6 +95,7 @@ html {
     
 }
 
+
 .option.hide {
     display: none;
 }
@@ -112,12 +113,15 @@ html {
     cursor: default;
     
 } */
+
 .option.--is-activated {
     border-left: 5px solid green;
     width: 100px;
     cursor: default;
     display: flex;
 }
+
+
 
 .option.--is-activated:hover {
     border-left:5px solid green;
@@ -128,6 +132,74 @@ html {
     width: auto;
     pointer-events: none;
 }
+
+
+
+.options2 {
+    position: absolute;
+    margin-top: 20px;
+    left: 80px;
+}
+
+
+.option2 {
+    background-size: cover;
+    background-position: 50%;
+    background-color: white;
+    margin-left: 40px;
+    margin-bottom: 5px;
+    padding: 10px;
+    height: 70px;
+    width: 75px;
+    display: none;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: baseline;
+	align-content: flex-start;
+    cursor: pointer;
+    
+}
+
+
+.option2.hide {
+    display: none;
+}
+
+.option2:hover {
+    border-left: 5px solid white;
+    width: 100px;
+    margin-left: 45px;
+  
+}
+
+/* .option.--is-active {
+    border-right: 5px solid red;
+    width: 90px;
+    cursor: default;
+    
+} */
+
+.option2.--is-activated {
+    border-left: 5px solid green;
+    width: 100px;
+    cursor: default;
+    display: flex;
+}
+
+
+
+.option2.--is-activated:hover {
+    border-left:5px solid green;
+}
+
+.option2 img {
+    height: 100%;
+    width: auto;
+    pointer-events: none;
+}
+
+
 
 .info {
     padding: 0 1em;
@@ -169,6 +241,7 @@ html {
 }
 
 .drag-notice {
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,13 +254,34 @@ html {
     text-transform: uppercase;
     text-align: center;
     border-radius: 5em;
-    background: white;
+    background: rgb(241, 53, 53);
     position: absolute;
 }
 
 .drag-notice.start {
     -webkit-animation: popout 0.25s 3s forwards;
     animation: popout 0.25s 3s forwards;
+    
+}
+
+.drag-notice.move {
+    -webkit-animation: movee 0.7s 3s forwards;
+    animation: movee 0.7s 3s forwards;
+    
+}
+
+@keyframes movee {
+    0%{
+        transform: translate(0);
+    }
+
+    /* 50%{
+        transform: translate(100px);
+    } */
+
+    100%{
+        transform: translate(500px, 500px);
+    }
 }
 
 @-webkit-keyframes popout {
@@ -267,6 +361,9 @@ html {
     .info {
         padding: 1em 2em;
     }
+    .option.hide {
+        display: none;
+    }
 
     .info__message {
         display: none;
@@ -279,19 +376,105 @@ html {
     .option {
         margin-bottom: 1px;
         padding: 5px;
-        height: 45px;
-        width: 45px;
+        height: 25px;
+        width: 25px;
+        display: flex;
+    }
+    .option.--is-activated {
+        border-left: 2px solid green;
+        width: 32px;
+        cursor: default;
         display: flex;
     }
 
-    .option.--is-active {
+    /* .option.--is-active {
         border-right: 2px solid red;
         width: 47px;
-    }
+    } */
 
     .option img {
         height: 100%;
         width: auto;
         pointer-events: none;
     }
+
+
+    .options2 {
+        top: 0px;  
+        left: 10px;
+    }
+
+    .option2 {
+        margin-bottom: 1px;
+        padding: 5px;
+        height: 25px;
+        width: 25px;
+        display: flex;
+        
+    }
+    
+    
+    .option2.hide {
+        display: none;
+    }
+    
+    .option2.--is-activated {
+        border-left: 2px solid green;
+        width: 32px;
+        cursor: default;
+        display: flex;
+    }
+    
+
+    
+    .option2 img {
+        height: 100%;
+        width: auto;
+        pointer-events: none;
+    }
+
+    .drag-notice {
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2em;
+        width: 6em;
+        height: 6em;
+        box-sizing: border-box;
+        font-size: 0.9em;
+        font-weight: 800;
+        text-transform: uppercase;
+        text-align: center;
+        border-radius: 5em;
+        background: rgb(241, 53, 53);
+        position: absolute;
+    }
+    
+    .drag-notice.start {
+        -webkit-animation: popout 0.25s 3s forwards;
+        animation: popout 0.25s 3s forwards;
+        
+    }
+    
+    .drag-notice.move {
+        -webkit-animation: movee 0.4s 4.8s forwards;
+        animation: movee 0.4s 4.8s forwards;
+        
+    }
+    
+    @keyframes movee {
+        0%{
+            transform: translate(0);
+        }
+    
+        /* 50%{
+            transform: translate(100px);
+        } */
+    
+        100%{
+            transform: translate(130px, 300px);
+        }
+    }
+
 }

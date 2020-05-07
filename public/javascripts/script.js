@@ -30,24 +30,69 @@ const MODEL_PATH = "Resizedprova.glb";
 var activeOption = 'nd';
 var loaded = false;
 
+let activated = 0;
 selectedPlaces = [{
   place: "FinalBaseMesh001",
   activated: false
 },
 {
-  place: "Memmb",
+  place: "cavigliadx",
   activated: false
 },
 {
-  place: "INTERO",
+  place: "cavigliasx",
   activated: false
 },
 {
-  place: "Pettoraledx",
+  place: "femoraledx",
   activated: false
 },
 {
-  place: "back",
+  place: "femoralesx",
+  activated: false
+},
+{
+  place: "gluteodx",
+  activated: false
+},
+{
+  place: "gluteosx",
+  activated: false
+},
+{
+  place: "piededx",
+  activated: false
+},
+{
+  place: "piedesx",
+  activated: false
+},
+{
+  place: "polpacciodx",
+  activated: false
+},
+{
+  place: "polpacciosx",
+  activated: false
+},
+{
+  place: "pube",
+  activated: false
+},
+{
+  place: "quadricipitedx",
+  activated: false
+},
+{
+  place: "quadricipitesx",
+  activated: false
+},
+{
+  place: "stincodx",
+  activated: false
+},
+{
+  place: "stincosx",
   activated: false
 }];
 
@@ -95,10 +140,21 @@ camera.position.y = 8;
 const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: 0xf1f1f1, shininess: 10 });
 
 const INITIAL_MAP = [
-  { childID: "Pettoraledx", mtl: INITIAL_MTL },
-  { childID: "base", mtl: INITIAL_MTL },
-  { childID: "INTERO", mtl: INITIAL_MTL },
-  { childID: "Memmb", mtl: INITIAL_MTL },
+  { childID: "cavigliasx", mtl: INITIAL_MTL },
+  { childID: "cavigliadx", mtl: INITIAL_MTL },
+  { childID: "femoraledx", mtl: INITIAL_MTL },
+  { childID: "femoralesx", mtl: INITIAL_MTL },
+  { childID: "gluteodx", mtl: INITIAL_MTL },
+  { childID: "gluteosx", mtl: INITIAL_MTL },
+  { childID: "piededx", mtl: INITIAL_MTL },
+  { childID: "piedesx", mtl: INITIAL_MTL },
+  { childID: "polpacciodx", mtl: INITIAL_MTL },
+  { childID: "polpacciosx", mtl: INITIAL_MTL },
+  { childID: "pube", mtl: INITIAL_MTL },
+  { childID: "quadricipitedx", mtl: INITIAL_MTL },
+  { childID: "quadricipitesx", mtl: INITIAL_MTL },
+  { childID: "stincodx", mtl: INITIAL_MTL },
+  { childID: "stincosx", mtl: INITIAL_MTL },
   { childID: "FinalBaseMesh001", mtl: INITIAL_MTL }];
 
 
@@ -144,6 +200,7 @@ loader.load(MODEL_PATH, function (gltf) {
 let add_click_touch = function (object) {
   let i = 0;
   let options = document.querySelectorAll(".option");
+  let options2 = document.querySelectorAll(".option2");
   let temp;
   while (i < selectedPlaces.length) {
 
@@ -153,15 +210,22 @@ let add_click_touch = function (object) {
           temp = opt;
         }
       }
+      for (opt of options2) {
+        if (opt.classList.contains(object.nameID)) {
+          temp = opt;
+        }
+      }
 
       if (selectedPlaces[i].activated == true) {
         selectedPlaces[i].activated = false;
         temp.classList.remove('--is-activated');
+        activated--;
         temp.classList.add('hide');
         setMaterial(theModel, object.nameID, INITIAL_MTL);
       } else {
         selectedPlaces[i].activated = true;
         temp.classList.add('--is-activated');
+        activated++;
         temp.classList.remove('hide');
         setMaterial(theModel, object.nameID, new_mtl);
       }
@@ -261,6 +325,8 @@ function animate() {
   if (theModel != null && loaded == false) {
     initialRotation();
     DRAG_NOTICE.classList.add('start');
+  } else {
+    DRAG_NOTICE.classList.add('move');
   }
 }
 
@@ -304,12 +370,16 @@ buildColors(colors);
 
 // Select Option
 const options = document.querySelectorAll(".option");
+const options2 = document.querySelectorAll(".option2");
 
 for (const option of options) {
   option.addEventListener('click', selectOption);
   //option.addEventListener('contextmenu', unsetColor);
 }
-
+for (const option of options2) {
+  option.addEventListener('click', selectOption);
+  //option.addEventListener('contextmenu', unsetColor);
+}
 
 
 function selectOption(e) {
@@ -332,12 +402,14 @@ function selectOption(e) {
     setMaterial(theModel, activeOption, INITIAL_MTL);
 
     option.classList.remove('--is-activated');
+    activated--;
     option.classList.add('hide');
     activeOption = null;
     selectedPlaces[j].activated = false;
     setMaterial(theModel, activeOption, INITIAL_MTL);
   } else if (option.classList.contains('--is-activated')) {
     option.classList.remove('--is-activated');
+    activated--;
     option.classList.add('hide');
     selectedPlaces[j].activated = false;
     setMaterial(theModel, activeOption, INITIAL_MTL);
@@ -346,6 +418,7 @@ function selectOption(e) {
     //seleziono l'elemento scelto e lo attivo nel vettore
 
     option.classList.add('--is-activated');
+    activated++;
     option.classList.remove('hide');
     selectedPlaces[j].activated = true;
     new_mtl = new THREE.MeshPhongMaterial({
@@ -418,70 +491,70 @@ function initialRotation() {
   }
 }
 
-// var slider = document.getElementById('js-tray'), sliderItems = document.getElementById('js-tray-slide'), difference;
+var slider = document.getElementById('js-tray'), sliderItems = document.getElementById('js-tray-slide'), difference;
 
-// function slide(wrapper, items) {
-//   var posX1 = 0,
-//     posX2 = 0,
-//     posInitial,
-//     threshold = 20,
-//     posFinal,
-//     slides = items.getElementsByClassName('tray__swatch');
+function slide(wrapper, items) {
+  var posX1 = 0,
+    posX2 = 0,
+    posInitial,
+    threshold = 20,
+    posFinal,
+    slides = items.getElementsByClassName('tray__swatch');
 
-//   // Mouse events
-//   items.onmousedown = dragStart;
+  // Mouse events
+  items.onmousedown = dragStart;
 
-//   // Touch events
-//   items.addEventListener('touchstart', dragStart);
-//   items.addEventListener('touchend', dragEnd);
-//   items.addEventListener('touchmove', dragAction);
+  // Touch events
+  items.addEventListener('touchstart', dragStart);
+  items.addEventListener('touchend', dragEnd);
+  items.addEventListener('touchmove', dragAction);
 
 
-//   function dragStart(e) {
-//     e = e || window.event;
-//     posInitial = items.offsetLeft;
-//     difference = sliderItems.offsetWidth - slider.offsetWidth;
-//     difference = difference * -1;
+  function dragStart(e) {
+    e = e || window.event;
+    posInitial = items.offsetLeft;
+    difference = sliderItems.offsetWidth - slider.offsetWidth;
+    difference = difference * -1;
 
-//     if (e.type == 'touchstart') {
-//       posX1 = e.touches[0].clientX;
-//     } else {
-//       posX1 = e.clientX;
-//       document.onmouseup = dragEnd;
-//       document.onmousemove = dragAction;
-//     }
-//   }
+    if (e.type == 'touchstart') {
+      posX1 = e.touches[0].clientX;
+    } else {
+      posX1 = e.clientX;
+      document.onmouseup = dragEnd;
+      document.onmousemove = dragAction;
+    }
+  }
 
-//   function dragAction(e) {
-//     e = e || window.event;
+  function dragAction(e) {
+    e = e || window.event;
 
-//     if (e.type == 'touchmove') {
-//       posX2 = posX1 - e.touches[0].clientX;
-//       posX1 = e.touches[0].clientX;
-//     } else {
-//       posX2 = posX1 - e.clientX;
-//       posX1 = e.clientX;
-//     }
+    if (e.type == 'touchmove') {
+      posX2 = posX1 - e.touches[0].clientX;
+      posX1 = e.touches[0].clientX;
+    } else {
+      posX2 = posX1 - e.clientX;
+      posX1 = e.clientX;
+    }
 
-//     if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
-//       items.style.left = items.offsetLeft - posX2 + "px";
-//     }
-//   }
+    if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
+      items.style.left = items.offsetLeft - posX2 + "px";
+    }
+  }
 
-//   function dragEnd(e) {
-//     posFinal = items.offsetLeft;
-//     if (posFinal - posInitial < -threshold) {
+  function dragEnd(e) {
+    posFinal = items.offsetLeft;
+    if (posFinal - posInitial < -threshold) {
 
-//     } else if (posFinal - posInitial > threshold) {
+    } else if (posFinal - posInitial > threshold) {
 
-//     } else {
-//       items.style.left = posInitial + "px";
-//     }
+    } else {
+      items.style.left = posInitial + "px";
+    }
 
-//     document.onmouseup = null;
-//     document.onmousemove = null;
-//   }
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 
-// }
+}
 
-// slide(slider, sliderItems);
+slide(slider, sliderItems);
