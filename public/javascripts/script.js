@@ -9,10 +9,10 @@ const DRAG_NOTICE = document.getElementById('js-drag-notice');
 function startup() {
   var el = document.getElementById("canvas");
   if (el) {
-    el.addEventListener("touchstart", handleStart, false);
-    el.addEventListener("touchend", handleEnd, false);
-    el.addEventListener("touchcancel", handleCancel, false);
-    el.addEventListener("touchmove", handleMove, false);
+    el.addEventListener("touchstart", selectOption);
+    el.addEventListener("touchend", selectOption);
+    el.addEventListener("touchcancel", selectOption);
+    el.addEventListener("touchmove", selectOption);
   }
 
 }
@@ -206,6 +206,7 @@ let add_click_touch = function (object) {
 
     if (selectedPlaces[i].place == object.nameID) {
       for (opt of options) {
+
         if (opt.classList.contains(object.nameID)) {
           temp = opt;
         }
@@ -350,23 +351,23 @@ function resizeRendererToDisplaySize(renderer) {
 
 // Function - Build Colors
 
-function buildColors(colors) {
-  for (let [i, color] of colors.entries()) {
-    let swatch = document.createElement('div');
-    swatch.classList.add('tray__swatch');
+// function buildColors(colors) {
+//   for (let [i, color] of colors.entries()) {
+//     let swatch = document.createElement('div');
+//     swatch.classList.add('tray__swatch');
 
-    if (color.texture) {
-      swatch.style.backgroundImage = "url(" + color.texture + ")";
-    } else {
-      swatch.style.background = "#" + color.color;
-    }
+//     if (color.texture) {
+//       swatch.style.backgroundImage = "url(" + color.texture + ")";
+//     } else {
+//       swatch.style.background = "#" + color.color;
+//     }
 
-    swatch.setAttribute('data-key', i);
-    TRAY.append(swatch);
-  }
-}
+//     swatch.setAttribute('data-key', i);
+//     TRAY.append(swatch);
+//   }
+// }
 
-buildColors(colors);
+// buildColors(colors);
 
 // Select Option
 const options = document.querySelectorAll(".option");
@@ -404,7 +405,7 @@ function selectOption(e) {
     option.classList.remove('--is-activated');
     activated--;
     option.classList.add('hide');
-    activeOption = null;
+    //activeOption = null;
     selectedPlaces[j].activated = false;
     setMaterial(theModel, activeOption, INITIAL_MTL);
   } else if (option.classList.contains('--is-activated')) {
