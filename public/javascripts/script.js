@@ -25,76 +25,17 @@ var theModel;
 
 
 //const MODEL_PATH = "Resized.glb";
-const MODEL_PATH = "Resizedprova.glb";
+const MODEL_PATH = "a.glb";
+let numberOfMeshes = 102;
+
+
 
 var activeOption = 'nd';
 var loaded = false;
 
 let activated = 0;
-selectedPlaces = [{
-  place: "FinalBaseMesh001",
-  activated: false
-},
-{
-  place: "cavigliadx",
-  activated: false
-},
-{
-  place: "cavigliasx",
-  activated: false
-},
-{
-  place: "femoraledx",
-  activated: false
-},
-{
-  place: "femoralesx",
-  activated: false
-},
-{
-  place: "gluteodx",
-  activated: false
-},
-{
-  place: "gluteosx",
-  activated: false
-},
-{
-  place: "piededx",
-  activated: false
-},
-{
-  place: "piedesx",
-  activated: false
-},
-{
-  place: "polpacciodx",
-  activated: false
-},
-{
-  place: "polpacciosx",
-  activated: false
-},
-{
-  place: "pube",
-  activated: false
-},
-{
-  place: "quadricipitedx",
-  activated: false
-},
-{
-  place: "quadricipitesx",
-  activated: false
-},
-{
-  place: "stincodx",
-  activated: false
-},
-{
-  place: "stincosx",
-  activated: false
-}];
+selectedPlaces = [
+];
 
 
 const colors = [
@@ -140,22 +81,23 @@ camera.position.y = 8;
 const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: 0xf1f1f1, shininess: 10 });
 
 const INITIAL_MAP = [
-  { childID: "cavigliasx", mtl: INITIAL_MTL },
-  { childID: "cavigliadx", mtl: INITIAL_MTL },
-  { childID: "femoraledx", mtl: INITIAL_MTL },
-  { childID: "femoralesx", mtl: INITIAL_MTL },
-  { childID: "gluteodx", mtl: INITIAL_MTL },
-  { childID: "gluteosx", mtl: INITIAL_MTL },
-  { childID: "piededx", mtl: INITIAL_MTL },
-  { childID: "piedesx", mtl: INITIAL_MTL },
-  { childID: "polpacciodx", mtl: INITIAL_MTL },
-  { childID: "polpacciosx", mtl: INITIAL_MTL },
-  { childID: "pube", mtl: INITIAL_MTL },
-  { childID: "quadricipitedx", mtl: INITIAL_MTL },
-  { childID: "quadricipitesx", mtl: INITIAL_MTL },
-  { childID: "stincodx", mtl: INITIAL_MTL },
-  { childID: "stincosx", mtl: INITIAL_MTL },
-  { childID: "FinalBaseMesh001", mtl: INITIAL_MTL }];
+
+];
+
+let nameOb;
+
+for (let i = 0; i < numberOfMeshes; i++) {
+  if (i < 10) {
+    nameOb = "a00" + i.toString();
+  } else if (i >= 10 && i < 100) {
+    nameOb = "a0" + i.toString();
+  } else {
+    nameOb = "a" + i.toString();
+  }
+  INITIAL_MAP.push({ childID: nameOb, mtl: INITIAL_MTL });
+  selectedPlaces.push({ place: nameOb, activated: false });
+}
+
 
 
 // Init the object loader
@@ -163,7 +105,7 @@ var loader = new THREE.GLTFLoader();
 
 loader.load(MODEL_PATH, function (gltf) {
   theModel = gltf.scene;
-
+  console.log(theModel.children.length);
   theModel.traverse(o => {
     if (o.isMesh) {
       o.castShadow = true;
@@ -177,6 +119,13 @@ loader.load(MODEL_PATH, function (gltf) {
 
   // Offset the y position a bit
   theModel.position.y = -1;
+
+
+
+
+
+
+
 
   // Set initial textures
   for (let object of INITIAL_MAP) {
@@ -198,6 +147,7 @@ loader.load(MODEL_PATH, function (gltf) {
 //on each mesh of theModel
 //object is the mesh inside the collection of meshes in theModel
 let add_click_touch = function (object) {
+
   let i = 0;
   let options = document.querySelectorAll(".option");
   let options2 = document.querySelectorAll(".option2");
