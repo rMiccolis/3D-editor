@@ -276,7 +276,7 @@ scene.add(floor);
 
 // Add controls
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.maxPolarAngle = Math.PI / 2;
+controls.maxPolarAngle = Math.PI;
 controls.minPolarAngle = Math.PI / 30;
 controls.enableDamping = true;
 controls.enablePan = false;
@@ -325,25 +325,26 @@ function resizeRendererToDisplaySize(renderer) {
   return needResize;
 }
 
-// Function - Build Colors
+function changeCamPosition(event) {
+  event.preventDefault();
 
-// function buildColors(colors) {
-//   for (let [i, color] of colors.entries()) {
-//     let swatch = document.createElement('div');
-//     swatch.classList.add('tray__swatch');
+  let targetMid = new THREE.Vector3(0, 5, 0);
+  let targetUp = new THREE.Vector3(0, 8, 0);
+  let targetDown = new THREE.Vector3(0, 0, 0);
+  if (controls.target.y == targetMid.y) {
+    controls.target.y = targetUp.y;
+  } else if (controls.target.y == targetUp.y) {
+    controls.target.y = targetDown.y;
+  } else {
 
-//     if (color.texture) {
-//       swatch.style.backgroundImage = "url(" + color.texture + ")";
-//     } else {
-//       swatch.style.background = "#" + color.color;
-//     }
 
-//     swatch.setAttribute('data-key', i);
-//     TRAY.append(swatch);
-//   }
-// }
+    controls.target.y = targetMid.y;
+  }
+  controls.update();
+  return false;
+}
 
-// buildColors(colors);
+
 
 // Select Option
 // const options = document.querySelectorAll(".option");
@@ -409,41 +410,26 @@ function resizeRendererToDisplaySize(renderer) {
 
 var domEvents = new THREEx.DomEvents(camera, renderer.domElement);
 
-// Swatches
-// const swatches = document.querySelectorAll(".tray__swatch");
+function changeCamPosition(event) {
+  event.preventDefault();
 
-// for (const swatch of swatches) {
-//   swatch.addEventListener('click', selectSwatch);
-// }
-
-// function selectSwatch(e) {
-//   let color = colors[parseInt(e.target.dataset.key)];
-//   let new_mtl;
-
-//   if (color.texture) {
-
-//     let txt = new THREE.TextureLoader().load(color.texture);
-
-//     txt.repeat.set(color.size[0], color.size[1], color.size[2]);
-//     txt.wrapS = THREE.RepeatWrapping;
-//     txt.wrapT = THREE.RepeatWrapping;
-
-//     new_mtl = new THREE.MeshPhongMaterial({
-//       map: txt,
-//       shininess: color.shininess ? color.shininess : 10
-//     });
-
-//   } else {
-//     new_mtl = new THREE.MeshPhongMaterial({
-//       color: parseInt('0x' + color.color),
-//       shininess: color.shininess ? color.shininess : 10
-//     });
+  let targetMid = new THREE.Vector3(0, 5, 0);
+  let targetUp = new THREE.Vector3(0, 8, 0);
+  let targetDown = new THREE.Vector3(0, 0, 0);
+  if (controls.target.y == targetMid.y) {
+    controls.target.y = targetUp.y;
+  } else if (controls.target.y == targetUp.y) {
+    controls.target.y = targetDown.y;
+  } else {
 
 
-//   }
+    controls.target.y = targetMid.y;
+  }
+  controls.update();
+  return false;
+}
 
-//   setMaterial(theModel, activeOption, new_mtl);
-// }
+document.addEventListener('contextmenu', changeCamPosition, false);
 
 function setMaterial(parent, type, mtl) {
   parent.traverse(o => {
@@ -467,71 +453,3 @@ function initialRotation() {
     loaded = true;
   }
 }
-
-// var slider = document.getElementById('js-tray'), sliderItems = document.getElementById('js-tray-slide'), difference;
-
-// function slide(wrapper, items) {
-//   var posX1 = 0,
-//     posX2 = 0,
-//     posInitial,
-//     threshold = 20,
-//     posFinal,
-//     slides = items.getElementsByClassName('tray__swatch');
-
-//   // Mouse events
-//   items.onmousedown = dragStart;
-
-//   // Touch events
-//   items.addEventListener('touchstart', dragStart);
-//   items.addEventListener('touchend', dragEnd);
-//   items.addEventListener('touchmove', dragAction);
-
-
-//   function dragStart(e) {
-//     e = e || window.event;
-//     posInitial = items.offsetLeft;
-//     difference = sliderItems.offsetWidth - slider.offsetWidth;
-//     difference = difference * -1;
-
-//     if (e.type == 'touchstart') {
-//       posX1 = e.touches[0].clientX;
-//     } else {
-//       posX1 = e.clientX;
-//       document.onmouseup = dragEnd;
-//       document.onmousemove = dragAction;
-//     }
-//   }
-
-//   function dragAction(e) {
-//     e = e || window.event;
-
-//     if (e.type == 'touchmove') {
-//       posX2 = posX1 - e.touches[0].clientX;
-//       posX1 = e.touches[0].clientX;
-//     } else {
-//       posX2 = posX1 - e.clientX;
-//       posX1 = e.clientX;
-//     }
-
-//     if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
-//       items.style.left = items.offsetLeft - posX2 + "px";
-//     }
-//   }
-
-//   function dragEnd(e) {
-//     posFinal = items.offsetLeft;
-//     if (posFinal - posInitial < -threshold) {
-
-//     } else if (posFinal - posInitial > threshold) {
-
-//     } else {
-//       items.style.left = posInitial + "px";
-//     }
-
-//     document.onmouseup = null;
-//     document.onmousemove = null;
-//   }
-
-// }
-
-// slide(slider, sliderItems);

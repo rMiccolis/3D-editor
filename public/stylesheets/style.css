@@ -182,6 +182,11 @@ html {
     display: flex;
 }
 
+ h2 {
+    position:absolute;
+    bottom:0;
+    right:50px;
+}
 
 
 .option2.--is-activated:hover {
@@ -314,6 +319,12 @@ html {
     left: 11px;
     }
 
+    h2 {
+        position:absolute;
+        bottom:0;
+        right:22px;
+    }
+
     .info {
         padding: 0 1em 1em 0;
     }
@@ -363,7 +374,7 @@ html {
         animation: popout 0.25s 3s forwards;
         
     }
-    
+
     .drag-notice.move {
         -webkit-animation: movee 0.7s 3s forwards;
         animation: movee 0.7s 3s forwards;
@@ -409,7 +420,11 @@ html {
     .info__message {
         display: none;
     }
-
+h2 {
+    font-size: 12px;
+    bottom: 0;
+    right: 10px;
+}
     .options {
         position: absolute;
         top: 45px;  
@@ -535,7 +550,7 @@ html {
         } */
     
         100%{
-            transform: translate(130px, 300px);
+            transform: translate(130px, 290px);
         }
     }
 

@@ -278,15 +278,16 @@ scene.add(floor);
 
 // Add controls
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.maxPolarAngle = Math.PI / 2;
+controls.maxPolarAngle = Math.PI;
 controls.minPolarAngle = Math.PI / 30;
+
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.minDistance = 8;
-controls.maxDistance = 30;
+controls.maxDistance = 25;
 controls.dampingFactor = 0.04;
-controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
-controls.autoRotateSpeed = 0.2; // 30
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.7; // 30
 controls.target = new THREE.Vector3(0, 5, 0);
 
 
@@ -343,10 +344,28 @@ function onMouseMove(event) {
 }
 
 
+function changeCamPosition(event) {
+    event.preventDefault();
+
+    let targetMid = new THREE.Vector3(0, 5, 0);
+    let targetUp = new THREE.Vector3(0, 8, 0);
+    let targetDown = new THREE.Vector3(0, 0, 0);
+    if (controls.target.y == targetMid.y) {
+        controls.target.y = targetUp.y;
+    } else if (controls.target.y == targetUp.y) {
+        controls.target.y = targetDown.y;
+    } else {
+
+
+        controls.target.y = targetMid.y;
+    }
+    controls.update();
+    return false;
+}
 
 document.addEventListener('click', onMouseClick, false);
 document.addEventListener('mousemove', onMouseMove, false);
-
+document.addEventListener('contextmenu', changeCamPosition, false);
 
 
 function animate() {
