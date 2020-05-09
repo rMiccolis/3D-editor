@@ -204,6 +204,32 @@ function initColor(parent, type, mtl) {
         domEvents.addEventListener(o, 'touchstart', function (event) {
           add_click_touch(o);
         }, false);
+        domEvents.addEventListener(o, 'mouseover', function (event) {
+          for (const mesh of selectedPlaces) {
+            if (mesh.place == o.nameID && mesh.activated == false) {
+              new_mtl1 = new THREE.MeshPhongMaterial({
+                color: parseInt('0xdaffa3'),
+                shininess: 1
+              });
+              setMaterial(theModel, type, new_mtl1);
+              // setTimeout(function () {
+              //   setMaterial(theModel, type, INITIAL_MTL);
+              // }, 300);
+            }
+          }
+
+        }, false);
+
+        domEvents.addEventListener(o, 'mouseout', function (event) {
+          for (const mesh of selectedPlaces) {
+            if (mesh.place == o.nameID && mesh.activated == false) {
+              setTimeout(function () {
+                setMaterial(theModel, type, INITIAL_MTL);
+              }, 50);
+            }
+          }
+
+        }, false);
       }
     }
   });
@@ -264,15 +290,15 @@ controls.target = new THREE.Vector3(0, 5, 0);
 function animate() {
 
   controls.update();
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
+
 
   if (resizeRendererToDisplaySize(renderer)) {
     const canvas = renderer.domElement;
     camera.aspect = canvas.clientWidth / canvas.clientHeight;
     camera.updateProjectionMatrix();
   }
-
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
   if (theModel != null && loaded == false) {
     initialRotation();
     DRAG_NOTICE.classList.add('start');
@@ -442,70 +468,70 @@ function initialRotation() {
   }
 }
 
-var slider = document.getElementById('js-tray'), sliderItems = document.getElementById('js-tray-slide'), difference;
+// var slider = document.getElementById('js-tray'), sliderItems = document.getElementById('js-tray-slide'), difference;
 
-function slide(wrapper, items) {
-  var posX1 = 0,
-    posX2 = 0,
-    posInitial,
-    threshold = 20,
-    posFinal,
-    slides = items.getElementsByClassName('tray__swatch');
+// function slide(wrapper, items) {
+//   var posX1 = 0,
+//     posX2 = 0,
+//     posInitial,
+//     threshold = 20,
+//     posFinal,
+//     slides = items.getElementsByClassName('tray__swatch');
 
-  // Mouse events
-  items.onmousedown = dragStart;
+//   // Mouse events
+//   items.onmousedown = dragStart;
 
-  // Touch events
-  items.addEventListener('touchstart', dragStart);
-  items.addEventListener('touchend', dragEnd);
-  items.addEventListener('touchmove', dragAction);
+//   // Touch events
+//   items.addEventListener('touchstart', dragStart);
+//   items.addEventListener('touchend', dragEnd);
+//   items.addEventListener('touchmove', dragAction);
 
 
-  function dragStart(e) {
-    e = e || window.event;
-    posInitial = items.offsetLeft;
-    difference = sliderItems.offsetWidth - slider.offsetWidth;
-    difference = difference * -1;
+//   function dragStart(e) {
+//     e = e || window.event;
+//     posInitial = items.offsetLeft;
+//     difference = sliderItems.offsetWidth - slider.offsetWidth;
+//     difference = difference * -1;
 
-    if (e.type == 'touchstart') {
-      posX1 = e.touches[0].clientX;
-    } else {
-      posX1 = e.clientX;
-      document.onmouseup = dragEnd;
-      document.onmousemove = dragAction;
-    }
-  }
+//     if (e.type == 'touchstart') {
+//       posX1 = e.touches[0].clientX;
+//     } else {
+//       posX1 = e.clientX;
+//       document.onmouseup = dragEnd;
+//       document.onmousemove = dragAction;
+//     }
+//   }
 
-  function dragAction(e) {
-    e = e || window.event;
+//   function dragAction(e) {
+//     e = e || window.event;
 
-    if (e.type == 'touchmove') {
-      posX2 = posX1 - e.touches[0].clientX;
-      posX1 = e.touches[0].clientX;
-    } else {
-      posX2 = posX1 - e.clientX;
-      posX1 = e.clientX;
-    }
+//     if (e.type == 'touchmove') {
+//       posX2 = posX1 - e.touches[0].clientX;
+//       posX1 = e.touches[0].clientX;
+//     } else {
+//       posX2 = posX1 - e.clientX;
+//       posX1 = e.clientX;
+//     }
 
-    if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
-      items.style.left = items.offsetLeft - posX2 + "px";
-    }
-  }
+//     if (items.offsetLeft - posX2 <= 0 && items.offsetLeft - posX2 >= difference) {
+//       items.style.left = items.offsetLeft - posX2 + "px";
+//     }
+//   }
 
-  function dragEnd(e) {
-    posFinal = items.offsetLeft;
-    if (posFinal - posInitial < -threshold) {
+//   function dragEnd(e) {
+//     posFinal = items.offsetLeft;
+//     if (posFinal - posInitial < -threshold) {
 
-    } else if (posFinal - posInitial > threshold) {
+//     } else if (posFinal - posInitial > threshold) {
 
-    } else {
-      items.style.left = posInitial + "px";
-    }
+//     } else {
+//       items.style.left = posInitial + "px";
+//     }
 
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
+//     document.onmouseup = null;
+//     document.onmousemove = null;
+//   }
 
-}
+// }
 
-slide(slider, sliderItems);
+// slide(slider, sliderItems);
