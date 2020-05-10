@@ -3,21 +3,20 @@ const LOADER = document.getElementById('js-loader');
 const TRAY = document.getElementById('js-tray-slide');
 const DRAG_NOTICE = document.getElementById('js-drag-notice');
 
+hover_color = new THREE.MeshPhongMaterial({
+  color: parseInt('0xdaffa3'),
+  shininess: 10
+});
 
+selected_color = new THREE.MeshPhongMaterial({
+  color: parseInt('0x00FF00'),
+  shininess: 10
+});
 
-
-// function startup() {
-//   var el = document.getElementById("canvas");
-//   if (el) {
-//     el.addEventListener("touchstart", selectOption);
-//     el.addEventListener("touchend", selectOption);
-//     el.addEventListener("touchcancel", selectOption);
-//     el.addEventListener("touchmove", selectOption);
-//   }
-
-// }
-
-// document.addEventListener("DOMContentLoaded", startup);
+const INITIAL_MTL = new THREE.MeshPhongMaterial({
+  color: 0xf1f1f1,
+  shininess: 10
+});
 
 
 var theModel;
@@ -26,7 +25,7 @@ var theModel;
 
 //const MODEL_PATH = "Resized.glb";
 const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 102;
+let numberOfMeshes = 350;
 
 
 
@@ -38,15 +37,6 @@ selectedPlaces = [
 ];
 
 
-const colors = [
-
-  {
-    color: '27548D'
-  },
-
-  {
-    color: '438AAC'
-  }];
 
 
 //const BACKGROUND_COLOR = 0xf1f1f1;
@@ -75,10 +65,6 @@ camera.position.z = cameraFar;
 camera.position.x = 2;
 camera.position.y = 8;
 
-
-
-// Initial material
-const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: 0xf1f1f1, shininess: 10 });
 
 const INITIAL_MAP = [
 
@@ -178,7 +164,7 @@ let add_click_touch = function (object) {
         //temp.classList.add('--is-activated');
         activated++;
         //temp.classList.remove('hide');
-        setMaterial(theModel, object.nameID, new_mtl);
+        setMaterial(theModel, object.nameID, selected_color);
       }
       break;
     }
@@ -191,10 +177,7 @@ function initColor(parent, type, mtl) {
   parent.traverse(o => {
     if (o.isMesh) {
       if (o.name.includes(type)) {
-        new_mtl = new THREE.MeshPhongMaterial({
-          color: parseInt('0x00FE32'),
-          shininess: 10
-        });
+
         o.material = mtl;
         o.nameID = type; // Set a new property to identify this object
         domEvents.addEventListener(o, 'click', function (event) {
@@ -207,14 +190,9 @@ function initColor(parent, type, mtl) {
         domEvents.addEventListener(o, 'mouseover', function (event) {
           for (const mesh of selectedPlaces) {
             if (mesh.place == o.nameID && mesh.activated == false) {
-              new_mtl1 = new THREE.MeshPhongMaterial({
-                color: parseInt('0xdaffa3'),
-                shininess: 1
-              });
-              setMaterial(theModel, type, new_mtl1);
-              // setTimeout(function () {
-              //   setMaterial(theModel, type, INITIAL_MTL);
-              // }, 300);
+
+              setMaterial(theModel, type, hover_color);
+
             }
           }
 

@@ -11,19 +11,21 @@ var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
 
+hover_color = new THREE.MeshPhongMaterial({
+    color: parseInt('0xdaffa3'),
+    shininess: 10
+});
 
-// function startup() {
-//   var el = document.getElementById("canvas");
-//   if (el) {
-//     el.addEventListener("touchstart", selectOption);
-//     el.addEventListener("touchend", selectOption);
-//     el.addEventListener("touchcancel", selectOption);
-//     el.addEventListener("touchmove", selectOption);
-//   }
+selected_color = new THREE.MeshPhongMaterial({
+    color: parseInt('0x00FF00'),
+    shininess: 10
+});
 
-// }
-
-// document.addEventListener("DOMContentLoaded", startup);
+// Initial material
+const INITIAL_MTL = new THREE.MeshPhongMaterial({
+    color: 0xf1f1f1,
+    shininess: 10
+});
 
 
 var theModel;
@@ -31,8 +33,8 @@ var theModel;
 
 
 //const MODEL_PATH = "Resized.glb";
-const MODEL_PATH = "a.glb";
-let numberOfMeshes = 43;
+const MODEL_PATH = "aa.glb";
+let numberOfMeshes = 400;
 
 
 
@@ -44,15 +46,6 @@ selectedPlaces = [
 ];
 
 
-const colors = [
-
-    {
-        color: '27548D'
-    },
-
-    {
-        color: '438AAC'
-    }];
 
 
 //const BACKGROUND_COLOR = 0xf1f1f1;
@@ -83,8 +76,7 @@ camera.position.y = 8;
 
 
 
-// Initial material
-const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: 0xf1f1f1, shininess: 10 });
+
 
 const INITIAL_MAP = [
 
@@ -180,7 +172,7 @@ let add_click_touch = function (object) {
                 //temp.classList.add('--is-activated');
                 activated++;
                 //temp.classList.remove('hide');
-                setMaterial(theModel, object.nameID, new_mtl);
+                setMaterial(theModel, object.nameID, selected_color);
             }
             break;
         }
@@ -308,12 +300,7 @@ function hoverMesh(mesh) {
     for (let obj of selectedPlaces) {
         if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
-            new_mtl1 = new THREE.MeshPhongMaterial({
-                color: parseInt('0xdaffa3'),
-                shininess: 5
-            });
-
-            setMaterial(theModel, mesh.nameID, new_mtl1);
+            setMaterial(theModel, mesh.nameID, hover_color);
 
             obj.hovered = true;
 
