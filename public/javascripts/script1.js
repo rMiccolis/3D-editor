@@ -306,9 +306,8 @@ function onMouseClick(event) {
 
 function hoverMesh(mesh) {
     for (let obj of selectedPlaces) {
-        if (obj.place == mesh.nameID && obj.activated == false) {
+        if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
-            obj.hovered = true;
             new_mtl1 = new THREE.MeshPhongMaterial({
                 color: parseInt('0xdaffa3'),
                 shininess: 5
@@ -316,12 +315,14 @@ function hoverMesh(mesh) {
 
             setMaterial(theModel, mesh.nameID, new_mtl1);
 
+            obj.hovered = true;
+
         } else {
-            if (obj.place != mesh.nameID && obj.activated == false) {
+            if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
                 setTimeout(function () {
+                    obj.hovered = false;
                     setMaterial(theModel, obj.place, INITIAL_MTL);
                 }, 200);
-
             }
         }
     }
