@@ -317,8 +317,11 @@ function hoverMesh(mesh) {
             setMaterial(theModel, mesh.nameID, new_mtl1);
 
         } else {
-            if (obj.place != mesh.name && obj.activated == false) {
-                setTimeout(setMaterial(theModel, obj.place, INITIAL_MTL), 500);
+            if (obj.place != mesh.nameID && obj.activated == false) {
+                setTimeout(function () {
+                    setMaterial(theModel, obj.place, INITIAL_MTL);
+                }, 200);
+
             }
         }
     }
@@ -337,7 +340,9 @@ function onMouseMove(event) {
         for (let obj of selectedPlaces) {
 
             if (!obj.activated) {
-                setTimeout(setMaterial(theModel, obj.place, INITIAL_MTL), 500);
+                setTimeout(function () {
+                    setMaterial(theModel, obj.place, INITIAL_MTL);
+                }, 300);
             }
         }
     }

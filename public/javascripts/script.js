@@ -25,7 +25,7 @@ var theModel;
 
 
 //const MODEL_PATH = "Resized.glb";
-const MODEL_PATH = "a.glb";
+const MODEL_PATH = "aa.glb";
 let numberOfMeshes = 102;
 
 
@@ -225,7 +225,7 @@ function initColor(parent, type, mtl) {
             if (mesh.place == o.nameID && mesh.activated == false) {
               setTimeout(function () {
                 setMaterial(theModel, type, INITIAL_MTL);
-              }, 50);
+              }, 150);
             }
           }
 
