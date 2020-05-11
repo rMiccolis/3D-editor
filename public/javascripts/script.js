@@ -38,7 +38,7 @@ var theModel;
 
 //const MODEL_PATH = "Resized.glb";
 const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 650;
+let numberOfMeshes = 850;
 
 
 
@@ -268,8 +268,8 @@ controls.enablePan = false;
 controls.minDistance = 8;
 controls.maxDistance = 30;
 controls.dampingFactor = 0.04;
-controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
-controls.autoRotateSpeed = 0.2; // 30
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
 controls.target = new THREE.Vector3(0, 5, 0);
 
 function animate() {
