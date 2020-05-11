@@ -7,6 +7,7 @@ const LOADER = document.getElementById('js-loader');
 const TRAY = document.getElementById('js-tray-slide');
 const DRAG_NOTICE = document.getElementById('js-drag-notice');
 
+//objects to add listners to each mesh
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
@@ -31,8 +32,6 @@ const INITIAL_MTL = new THREE.MeshPhongMaterial({
 var theModel;
 
 
-
-//const MODEL_PATH = "Resized.glb";
 const MODEL_PATH = "aa.glb";
 let numberOfMeshes = 400;
 
@@ -44,8 +43,6 @@ var loaded = false;
 let activated = 0;
 selectedPlaces = [
 ];
-
-
 
 
 //const BACKGROUND_COLOR = 0xf1f1f1;
@@ -143,7 +140,7 @@ let add_click_touch = function (object) {
     let i = 0;
     // let options = document.querySelectorAll(".option");
     // let options2 = document.querySelectorAll(".option2");
-    let temp;
+    // -let temp;
     while (i < selectedPlaces.length) {
 
         if (selectedPlaces[i].place == object.nameID) {

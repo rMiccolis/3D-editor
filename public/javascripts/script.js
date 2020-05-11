@@ -1,3 +1,16 @@
+let device = "PC";
+
+if (navigator.userAgent.match(/Android/i)
+  || navigator.userAgent.match(/webOS/i)
+  || navigator.userAgent.match(/iPhone/i)
+  || navigator.userAgent.match(/iPad/i)
+  || navigator.userAgent.match(/iPod/i)
+  || navigator.userAgent.match(/BlackBerry/i)
+) {
+  device = "mobile";
+}
+
+
 const LOADER = document.getElementById('js-loader');
 
 const TRAY = document.getElementById('js-tray-slide');
@@ -25,7 +38,7 @@ var theModel;
 
 //const MODEL_PATH = "Resized.glb";
 const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 350;
+let numberOfMeshes = 650;
 
 
 
@@ -107,12 +120,6 @@ loader.load(MODEL_PATH, function (gltf) {
   theModel.position.y = -1;
 
 
-
-
-
-
-
-
   // Set initial textures
   for (let object of INITIAL_MAP) {
     initColor(theModel, object.childID, object.mtl);
@@ -135,9 +142,9 @@ loader.load(MODEL_PATH, function (gltf) {
 let add_click_touch = function (object) {
 
   let i = 0;
-  let options = document.querySelectorAll(".option");
-  let options2 = document.querySelectorAll(".option2");
-  let temp;
+  // let options = document.querySelectorAll(".option");
+  // let options2 = document.querySelectorAll(".option2");
+  // let temp;
   while (i < selectedPlaces.length) {
 
     if (selectedPlaces[i].place == object.nameID) {
@@ -278,6 +285,12 @@ function animate() {
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
   if (theModel != null && loaded == false) {
+    let h2_advice = document.getElementById("device");
+    if (device == "PC") {
+      h2_advice.innerHTML = "Right click to change view";
+    } else {
+      h2_advice.innerHTML = "Tap with three fingers to change view";
+    }
     initialRotation();
     DRAG_NOTICE.classList.add('start');
   } else {
@@ -302,26 +315,6 @@ function resizeRendererToDisplaySize(renderer) {
   }
   return needResize;
 }
-
-function changeCamPosition(event) {
-  event.preventDefault();
-
-  let targetMid = new THREE.Vector3(0, 5, 0);
-  let targetUp = new THREE.Vector3(0, 8, 0);
-  let targetDown = new THREE.Vector3(0, 0, 0);
-  if (controls.target.y == targetMid.y) {
-    controls.target.y = targetUp.y;
-  } else if (controls.target.y == targetUp.y) {
-    controls.target.y = targetDown.y;
-  } else {
-
-
-    controls.target.y = targetMid.y;
-  }
-  controls.update();
-  return false;
-}
-
 
 
 // Select Option
@@ -407,7 +400,30 @@ function changeCamPosition(event) {
   return false;
 }
 
+function changeCamPositionMobile(event) {
+  event.preventDefault();
+  if (event.targetTouches.length == 3) {
+    let targetMid = new THREE.Vector3(0, 5, 0);
+    let targetUp = new THREE.Vector3(0, 8, 0);
+    let targetDown = new THREE.Vector3(0, 0, 0);
+    if (controls.target.y == targetMid.y) {
+      controls.target.y = targetUp.y;
+    } else if (controls.target.y == targetUp.y) {
+      controls.target.y = targetDown.y;
+    } else {
+
+
+      controls.target.y = targetMid.y;
+    }
+    controls.update();
+    return false;
+  }
+}
+
 document.addEventListener('contextmenu', changeCamPosition, false);
+document.addEventListener('touchstart', changeCamPositionMobile, false);
+
+
 
 function setMaterial(parent, type, mtl) {
   parent.traverse(o => {

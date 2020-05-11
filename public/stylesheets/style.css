@@ -535,8 +535,8 @@ h2 {
     }
     
     .drag-notice.move {
-        -webkit-animation: movee 0.4s 4.8s forwards;
-        animation: movee 0.4s 4.8s forwards;
+        -webkit-animation: movee 0.4s 6s forwards;
+        animation: movee 0.4s 6s forwards;
         
     }
     
