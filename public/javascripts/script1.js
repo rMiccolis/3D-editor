@@ -339,7 +339,7 @@ function hoverMesh(mesh) {
         if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
             setMaterial(theModel, mesh.nameID, hover_color);
-            lastHovered = mesh.nameID;
+            lastHovered = obj;
             obj.hovered = true;
 
         } else if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
@@ -361,8 +361,8 @@ function onMouseMove(event) {
     var intersects = raycaster.intersectObjects(objectss);
     if (intersects.length > 0) {
         hoverMesh(intersects[0].object);
-    } else {
-        setMaterial(theModel, lastHovered, INITIAL_MTL);
+    } else if (lastHovered.activated == false) {
+        setMaterial(theModel, lastHovered.place, INITIAL_MTL);
     }
 }
 
