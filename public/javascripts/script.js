@@ -38,7 +38,7 @@ var theModel;
 
 //const MODEL_PATH = "Resized.glb";
 const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 850;
+let numberOfMeshes = 1200;
 
 
 
@@ -195,6 +195,7 @@ function initColor(parent, type, mtl) {
           add_click_touch(o);
         }, false);
         domEvents.addEventListener(o, 'mouseover', function (event) {
+          console.log(o.nameID);
           for (const mesh of selectedPlaces) {
             if (mesh.place == o.nameID && mesh.activated == false) {
 

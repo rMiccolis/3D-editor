@@ -1,6 +1,18 @@
 //file uguale a script.js ma l'highlight delle parti è fatto da me senza uso della
 //libreria THREEx per "allenarmi" e capire il funzionamento di raycaster
 
+let device = "PC";
+
+if (navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)
+) {
+    device = "mobile";
+}
+
 
 const LOADER = document.getElementById('js-loader');
 
@@ -33,7 +45,7 @@ var theModel;
 
 
 const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 400;
+let numberOfMeshes = 1165;
 
 
 
@@ -102,9 +114,10 @@ loader.load(MODEL_PATH, function (gltf) {
     console.log(theModel.children.length);
     theModel.traverse(o => {
         if (o.isMesh) {
-            objectss.push(o);
+
             o.castShadow = true;
             o.receiveShadow = true;
+            objectss.push(o);
         }
     });
 
@@ -292,27 +305,54 @@ function onMouseClick(event) {
     }
 }
 
+function onTouchClick(event) {
+    if (event.targetTouches.length == 3) {
+        let targetMid = new THREE.Vector3(0, 5, 0);
+        let targetUp = new THREE.Vector3(0, 8, 0);
+        let targetDown = new THREE.Vector3(0, 0, 0);
+        if (controls.target.y == targetMid.y) {
+            controls.target.y = targetUp.y;
+        } else if (controls.target.y == targetUp.y) {
+            controls.target.y = targetDown.y;
+        } else {
+
+
+            controls.target.y = targetMid.y;
+        }
+        controls.update();
+        return false;
+    }
+
+    mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.touches[0].clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(objectss);
+
+    if (intersects.length > 0) {
+        add_click_touch(intersects[0].object);
+    }
+}
+
 
 function hoverMesh(mesh) {
     for (let obj of selectedPlaces) {
         if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
             setMaterial(theModel, mesh.nameID, hover_color);
-
+            lastHovered = mesh.nameID;
             obj.hovered = true;
 
-        } else {
-            if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
-                setTimeout(function () {
-                    obj.hovered = false;
-                    setMaterial(theModel, obj.place, INITIAL_MTL);
-                }, 200);
-            }
+        } else if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
+            setTimeout(function () {
+                obj.hovered = false;
+                setMaterial(theModel, obj.place, INITIAL_MTL);
+            }, 200);
         }
     }
 }
 
 
+let lastHovered;
 function onMouseMove(event) {
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -322,14 +362,7 @@ function onMouseMove(event) {
     if (intersects.length > 0) {
         hoverMesh(intersects[0].object);
     } else {
-        for (let obj of selectedPlaces) {
-
-            if (!obj.activated) {
-                setTimeout(function () {
-                    setMaterial(theModel, obj.place, INITIAL_MTL);
-                }, 300);
-            }
-        }
+        setMaterial(theModel, lastHovered, INITIAL_MTL);
     }
 }
 
@@ -354,6 +387,7 @@ function changeCamPosition(event) {
 }
 
 document.addEventListener('click', onMouseClick, false);
+document.addEventListener('touchstart', onTouchClick, false);
 document.addEventListener('mousemove', onMouseMove, false);
 document.addEventListener('contextmenu', changeCamPosition, false);
 
@@ -373,6 +407,12 @@ function animate() {
     }
 
     if (theModel != null && loaded == false) {
+        let h2_advice = document.getElementById("device");
+        if (device == "PC") {
+            h2_advice.innerHTML = "Right click to change view";
+        } else {
+            h2_advice.innerHTML = "Tap with three fingers to change view";
+        }
         initialRotation();
         DRAG_NOTICE.classList.add('start');
     } else {
