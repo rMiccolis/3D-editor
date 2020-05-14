@@ -13,6 +13,11 @@ if (navigator.userAgent.match(/Android/i)
     device = "mobile";
 }
 
+//camera position to swap used in ChangeCameraPosition
+let targetMid = new THREE.Vector3(0, 5, 0);
+let targetUp = new THREE.Vector3(0, 9, 0);
+let targetDown = new THREE.Vector3(0, 0, 0);
+
 
 const LOADER = document.getElementById('js-loader');
 
@@ -44,8 +49,8 @@ const INITIAL_MTL = new THREE.MeshPhongMaterial({
 var theModel;
 
 
-const MODEL_PATH = "aa.glb";
-let numberOfMeshes = 1165;
+const MODEL_PATH = "finished.glb";
+let numberOfMeshes = 2000;
 
 
 
@@ -289,7 +294,7 @@ controls.minDistance = 8;
 controls.maxDistance = 25;
 controls.dampingFactor = 0.04;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 0.7; // 30
+controls.autoRotateSpeed = 0.8; // 30
 controls.target = new THREE.Vector3(0, 5, 0);
 
 
@@ -307,9 +312,6 @@ function onMouseClick(event) {
 
 function onTouchClick(event) {
     if (event.targetTouches.length == 3) {
-        let targetMid = new THREE.Vector3(0, 5, 0);
-        let targetUp = new THREE.Vector3(0, 8, 0);
-        let targetDown = new THREE.Vector3(0, 0, 0);
         if (controls.target.y == targetMid.y) {
             controls.target.y = targetUp.y;
         } else if (controls.target.y == targetUp.y) {
@@ -346,7 +348,7 @@ function hoverMesh(mesh) {
             setTimeout(function () {
                 obj.hovered = false;
                 setMaterial(theModel, obj.place, INITIAL_MTL);
-            }, 200);
+            }, 50);
         }
     }
 }
@@ -369,10 +371,6 @@ function onMouseMove(event) {
 
 function changeCamPosition(event) {
     event.preventDefault();
-
-    let targetMid = new THREE.Vector3(0, 5, 0);
-    let targetUp = new THREE.Vector3(0, 8, 0);
-    let targetDown = new THREE.Vector3(0, 0, 0);
     if (controls.target.y == targetMid.y) {
         controls.target.y = targetUp.y;
     } else if (controls.target.y == targetUp.y) {
