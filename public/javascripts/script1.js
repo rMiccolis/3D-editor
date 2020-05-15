@@ -1,6 +1,9 @@
 //file uguale a script.js ma l'highlight delle parti è fatto da me senza uso della
 //libreria THREEx per "allenarmi" e capire il funzionamento di raycaster
 
+console.log(`${window.innerWidth}  ${window.innerHeight}`);
+
+
 let device = "PC";
 
 if (navigator.userAgent.match(/Android/i)
@@ -293,7 +296,7 @@ controls.enablePan = false;
 controls.minDistance = 8;
 controls.maxDistance = 25;
 controls.dampingFactor = 0.04;
-controls.autoRotate = true;
+controls.autoRotate = false;
 controls.autoRotateSpeed = 0.8; // 30
 controls.target = new THREE.Vector3(0, 5, 0);
 
@@ -317,8 +320,6 @@ function onTouchClick(event) {
         } else if (controls.target.y == targetUp.y) {
             controls.target.y = targetDown.y;
         } else {
-
-
             controls.target.y = targetMid.y;
         }
         controls.update();
@@ -363,7 +364,7 @@ function onMouseMove(event) {
     var intersects = raycaster.intersectObjects(objectss);
     if (intersects.length > 0) {
         hoverMesh(intersects[0].object);
-    } else if (lastHovered.activated == false) {
+    } else if (lastHovered != undefined && lastHovered.activated == false) {
         setMaterial(theModel, lastHovered.place, INITIAL_MTL);
     }
 }

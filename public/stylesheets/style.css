@@ -275,13 +275,12 @@ html {
         transform: translate(0);
     }
 
-    /* 50%{
-        transform: translate(100px);
-    } */
-
     100%{
-        transform: translate(1100px,500px);
-    }
+        
+         bottom:80px;
+         right:118px;
+         /* transform: translate(84vh,38vh);  */
+        }
 }
 
 @-webkit-keyframes popout {
@@ -312,7 +311,7 @@ html {
     }
 }
 
-@media (max-width: 1920px) {
+/* @media screen and (max-width: 1920px) {
     .options {
     position: absolute;
     margin-top: 20px;
@@ -387,32 +386,260 @@ html {
             transform: translate(0);
         }
     
-        /* 50%{
-            transform: translate(100px);
-        } */
-    
         100%{
             transform: translate(800px, 350px);
+        }
+    }
+    @-webkit-keyframes popout {
+        to {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+    }
+    
+    @keyframes popout {
+        to {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+    }
+    
+    @-webkit-keyframes wheelin {
+        to {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes wheelin {
+        to {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
         }
     }
     
 }
 
-@media (max-width: 720px) {
-    .info {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0 1em 1em;
-    }
-
-    .info__message {
-        margin-bottom: 1em;
-    }
+@media screen and (max-width: 1600px) {
+    .options {
+        position: absolute;
+        margin-top: 20px;
+        left: 11px;
+        }
     
+        h2 {
+            position:absolute;
+            bottom:0;
+            right:22px;
+        }
+    
+        .info {
+            padding: 0 1em 1em 0;
+        }
+    
+        .info__message {
+            display: flex;
+            align-items: flex-end;
+        }
+    
+        .info__message p {
+            margin: 0;
+            font-size: 0.7em;
+        }
+    
+        .frame {
+            left: auto;
+            right: 0;
+            padding-left: 6rem;
+        }
+    
+        .frame__links {
+            display: block;
+            margin: 0;
+            text-align: right;
+        }
+    
+        .drag-notice {
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2em;
+            width: 10em;
+            height: 10em;
+            box-sizing: border-box;
+            font-size: 0.9em;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            border-radius: 5em;
+            background: rgb(241, 53, 53);
+            position: absolute;
+        }
+        
+        .drag-notice.start {
+            -webkit-animation: popout 0.25s 3s forwards;
+            animation: popout 0.25s 3s forwards;
+            
+        }
+    
+        .drag-notice.move {
+            -webkit-animation: movee 0.7s 3s forwards;
+            animation: movee 0.7s 3s forwards;
+        }
+        @keyframes movee {
+            0%{
+                transform: translate(0);
+            }
+        
+            100%{
+                transform: translate(485%, 200%);
+            }
+        } 
+        @-webkit-keyframes popout {
+            to {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+        }
+        
+        @keyframes popout {
+            to {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+        }
+        
+        @-webkit-keyframes wheelin {
+            to {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes wheelin {
+            to {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+            }
+        }    
 }
+    
+    
+        
+        
 
-@media (max-width: 680px) {
+    
+
+    @media screen and (max-width: 1400px) {
+        .options {
+            position: absolute;
+            margin-top: 20px;
+            left: 11px;
+            }
+        
+            h2 {
+                position:absolute;
+                bottom:0;
+                right:22px;
+            }
+        
+            .info {
+                padding: 0 1em 1em 0;
+            }
+        
+            .info__message {
+                display: flex;
+                align-items: flex-end;
+            }
+        
+            .info__message p {
+                margin: 0;
+                font-size: 0.7em;
+            }
+        
+            .frame {
+                left: auto;
+                right: 0;
+                padding-left: 6rem;
+            }
+        
+            .frame__links {
+                display: block;
+                margin: 0;
+                text-align: right;
+            }
+        
+            .drag-notice {
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 2em;
+                width: 10em;
+                height: 10em;
+                box-sizing: border-box;
+                font-size: 0.9em;
+                font-weight: 800;
+                text-transform: uppercase;
+                text-align: center;
+                border-radius: 5em;
+                background: rgb(241, 53, 53);
+                position: absolute;
+            }
+            
+            .drag-notice.start {
+                -webkit-animation: popout 0.25s 3s forwards;
+                animation: popout 0.25s 3s forwards;
+                
+            }
+        
+            .drag-notice.move {
+                -webkit-animation: movee 0.7s 3s forwards;
+                animation: movee 0.7s 3s forwards;
+            }
+            
+            @keyframes movee {
+                0%{
+                    transform: translate(0);
+                }
+            
+                100%{
+                    transform: translate(420%, 170%);
+                }
+            }
+            @-webkit-keyframes popout {
+                to {
+                    -webkit-transform: scale(0);
+                    transform: scale(0);
+                }
+            }
+            
+            @keyframes popout {
+                to {
+                    -webkit-transform: scale(0);
+                    transform: scale(0);
+                }
+            }
+            
+            @-webkit-keyframes wheelin {
+                to {
+                    -webkit-transform: translateX(0);
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes wheelin {
+                to {
+                    -webkit-transform: translateX(0);
+                    transform: translateX(0);
+                }
+            }     
+    }
+
+
+*/
+@media screen and (max-width: 680px) {
     .info {
         padding: 1em 2em;
     }
@@ -454,11 +681,6 @@ h2 {
         display: flex;
     }
 
-
-    /* .option.--is-active {
-        border-right: 2px solid red;
-        width: 47px;
-    } */
 
     .option img {
         height: 100%;
@@ -545,13 +767,10 @@ h2 {
             transform: translate(0);
         }
     
-        /* 50%{
-            transform: translate(100px);
-        } */
     
         100%{
             transform: translate(130px, 290px);
         }
     }
 
-}
+} 
