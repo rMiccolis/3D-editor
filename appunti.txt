@@ -1,0 +1,19 @@
+
+let h2_advice;
+if (device == "PC") {
+  h2_advice = "<h3>Drag to rotate the model<br>Right click to change view<h3>";
+} else {
+  h2_advice = "Drag to rotate the model<br>Tap with three fingers to change view";
+}
+
+
+var text2 = document.createElement('div');
+text2.style.position = 'absolute';
+//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+text2.style.width = 100;
+text2.style.height = 100;
+
+text2.innerHTML = h2_advice;
+text2.style.top = 5 + 'px';
+text2.style.left = 20 + 'px';
+document.body.appendChild(text2);

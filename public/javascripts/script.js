@@ -11,6 +11,19 @@ if (navigator.userAgent.match(/Android/i)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 const LOADER = document.getElementById('js-loader');
 
 const TRAY = document.getElementById('js-tray-slide');

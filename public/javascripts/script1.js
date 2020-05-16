@@ -303,8 +303,12 @@ controls.target = new THREE.Vector3(0, 5, 0);
 
 
 function onMouseClick(event) {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    // mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    var rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
     raycaster.setFromCamera(mouse, camera);
     var intersects = raycaster.intersectObjects(objectss);
 
@@ -358,8 +362,11 @@ function hoverMesh(mesh) {
 let lastHovered;
 function onMouseMove(event) {
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    // mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    var rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     var intersects = raycaster.intersectObjects(objectss);
     if (intersects.length > 0) {
@@ -385,25 +392,24 @@ function changeCamPosition(event) {
     return false;
 }
 
-document.addEventListener('click', onMouseClick, false);
-document.addEventListener('touchstart', onTouchClick, false);
-document.addEventListener('mousemove', onMouseMove, false);
-document.addEventListener('contextmenu', changeCamPosition, false);
+canvas.addEventListener('click', onMouseClick, false);
+canvas.addEventListener('touchstart', onTouchClick, false);
+canvas.addEventListener('mousemove', onMouseMove, false);
+canvas.addEventListener('contextmenu', changeCamPosition, false);
 
 
 function animate() {
 
     controls.update();
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-    //
-
     if (resizeRendererToDisplaySize(renderer)) {
         const canvas = renderer.domElement;
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
     }
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+
+
 
     if (theModel != null && loaded == false) {
         let h2_advice = document.getElementById("device");
