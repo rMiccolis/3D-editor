@@ -1,7 +1,10 @@
 //file uguale a script.js ma l'highlight delle parti è fatto da me senza uso della
 //libreria THREEx per "allenarmi" e capire il funzionamento di raycaster
 
-console.log(`${window.innerWidth}  ${window.innerHeight}`);
+// console.log(`${window.innerWidth}  ${window.innerHeight}`);
+
+
+let clickable = false;
 
 
 let device = "PC";
@@ -18,7 +21,7 @@ if (navigator.userAgent.match(/Android/i)
     instructions = "Drag to rotate the model<br><br>Tap with three fingers to change view";
 }
 
-//camera position to swap used in ChangeCameraPosition
+//camera position to swap, used in ChangeCameraPosition
 let targetMid = new THREE.Vector3(0, 5, 0);
 let targetUp = new THREE.Vector3(0, 9, 0);
 let targetDown = new THREE.Vector3(0, 0, 0);
@@ -33,13 +36,41 @@ const TRAY = document.getElementById('js-tray-slide');
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
-const blue = new THREE.MeshPhongMaterial({
-    color: parseInt('0x187DF6'),
+
+// Initial material
+const INITIAL_MTL = new THREE.MeshPhongMaterial({
+    color: 0xf1f1f1,
     shininess: 10
 });
 
-const red = new THREE.MeshPhongMaterial({
-    color: parseInt('0xFD0000'),
+
+const nessun_dolore = new THREE.MeshPhongMaterial({
+    color: parseInt('0x00FF00'),
+    shininess: 10
+});
+
+const dolore_lieve = new THREE.MeshPhongMaterial({
+    color: parseInt('0x80ccff'),
+    shininess: 10
+});
+
+const dolore_moderato = new THREE.MeshPhongMaterial({
+    color: parseInt('0x2323d2'),
+    shininess: 10
+});
+
+const dolore_intenso = new THREE.MeshPhongMaterial({
+    color: parseInt('0x8a2070'),
+    shininess: 10
+});
+
+const dolore_forte = new THREE.MeshPhongMaterial({
+    color: parseInt('0x7a0026'),
+    shininess: 10
+});
+
+const dolore_molto_forte = new THREE.MeshPhongMaterial({
+    color: parseInt('0xff0000'),
     shininess: 10
 });
 
@@ -48,37 +79,90 @@ const hover_color = new THREE.MeshPhongMaterial({
     shininess: 10
 });
 
-const green = new THREE.MeshPhongMaterial({
-    color: parseInt('0x00FF00'),
-    shininess: 10
-});
 
-let selected_color = new THREE.MeshPhongMaterial({
-    color: parseInt('0x00FF00'),
-    shininess: 10
-});
+let selected_color = {
+    "nome_dolore": "nessun_dolore",
+    "material": nessun_dolore
+}
 
 function changeSelectedColor(color) {
     switch (color) {
-        case 'blue':
-            selected_color = blue;
+        case '#00ff00':
+            selected_color = {
+                "nome_dolore": "nessun_dolore",
+                "material": nessun_dolore
+            };
             break;
-        case 'red':
-            selected_color = red;
+        case '#ffffff':
+            selected_color = {
+                "nome_dolore": "dolore_lieve",
+                "material": dolore_lieve
+            };
+            break;
+        case '#2323d2':
+            selected_color = {
+                "nome_dolore": "dolore_moderato",
+                "material": dolore_moderato
+            };
+            break;
+        case '#8a2070':
+            selected_color = {
+                "nome_dolore": "dolore_intenso",
+                "material": dolore_intenso
+            };
+            break;
+        case '#7a0026':
+            selected_color = {
+                "nome_dolore": "dolore_forte",
+                "material": dolore_forte
+            };
+            break;
+        case '#ff0000':
+            selected_color = {
+                "nome_dolore": "dolore_molto_forte",
+                "material": dolore_molto_forte
+            };
             break;
         default:
-            selected_color = green;
+            selected_color = {
+                "nome_dolore": "nessun_dolore",
+                "material": nessun_dolore
+            };
     }
 
 };
 
+function readSelectedColor(colorr) {
+    let color;
+    switch (colorr) {
+        case 'nessun_dolore':
+            color = nessun_dolore;
+            break;
+        case 'dolore_lieve':
+            color = dolore_lieve;
+            break;
+        case 'dolore_moderato':
+            color = dolore_moderato;
+            break;
+        case 'dolore_intenso':
+            color = dolore_intenso;
+            break;
+        case 'dolore_forte':
+            color = dolore_forte;
+            break;
+        case 'dolore_molto_forte':
+            color = dolore_molto_forte;
+            break;
+        default:
+            color = INITIAL_MTL;
+    }
+    return color;
+};
 
-// Initial material
-const INITIAL_MTL = new THREE.MeshPhongMaterial({
-    color: 0xf1f1f1,
-    shininess: 10
-});
-
+let init = {
+    'nome_dolore': 'INITIAL_MTL',
+    'material': INITIAL_MTL
+};
 
 var theModel;
 
@@ -111,11 +195,30 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 
 renderer.shadowMap.enabled = true;
 renderer.setPixelRatio(window.devicePixelRatio);
-let el = document.getElementsByClassName("modal-body");
-el[0].appendChild(renderer.domElement);
+let insertCanvas = document.getElementById("3d_canv");
+
+let home_page_canvas = document.getElementById("home_page_canvas");
+
+home_canvas = home_page_canvas.appendChild(renderer.domElement);
+
+
+// canvas = renderer.domElement;
+canvas.style.position = "relative";
+canvas.style.top = "1%";
+// canvas.style.left = "30%";
+canvas.style.zIndex = "500";
+
 var cameraFar = 15;
 
-// document.body.appendChild(renderer.domElement);
+
+
+
+
+
+
+
+
+
 
 // Add a camerra
 var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -138,11 +241,12 @@ for (let i = 0; i < numberOfMeshes; i++) {
         nameOb = "a" + i.toString();
     }
     INITIAL_MAP.push({ childID: nameOb, mtl: INITIAL_MTL });
-    selectedPlaces.push({ place: nameOb, activated: false, hovered: false });
+
+    selectedPlaces.push({ name: nameOb, activated: false, hovered: false, dolore: init.nome_dolore });
 }
 
 let objectss = [];
-let currentSelected;
+
 // Init the object loader
 var loader = new THREE.GLTFLoader();
 
@@ -193,7 +297,7 @@ let add_click_touch = function (object) {
     // -let temp;
     while (i < selectedPlaces.length) {
 
-        if (selectedPlaces[i].place == object.nameID) {
+        if (selectedPlaces[i].name == object.nameID) {
             // for (opt of options) {
             //   if (opt.classList.contains(object.nameID)) {
             //     temp = opt;
@@ -213,13 +317,15 @@ let add_click_touch = function (object) {
                 activated--;
                 //temp.classList.add('hide');
                 setMaterial(theModel, object.nameID, INITIAL_MTL);
+                selectedPlaces[i].dolore = init.nome_dolore;
             } else {
                 selectedPlaces[i].activated = true;
                 selectedPlaces[i].hovered = false;
                 //temp.classList.add('--is-activated');
                 activated++;
                 //temp.classList.remove('hide');
-                setMaterial(theModel, object.nameID, selected_color);
+                setMaterial(theModel, object.nameID, selected_color.material);
+                selectedPlaces[i].dolore = selected_color.nome_dolore;
             }
             break;
         }
@@ -232,45 +338,13 @@ function initColor(parent, type, mtl) {
     parent.traverse(o => {
         if (o.isMesh) {
             if (o.name.includes(type)) {
-                new_mtl = new THREE.MeshPhongMaterial({
-                    color: parseInt('0x00FE32'),
-                    shininess: 10
-                });
+                // new_mtl = new THREE.MeshPhongMaterial({
+                //     color: parseInt('0x00FE32'),
+                //     shininess: 10
+                // });
                 o.material = mtl;
                 o.nameID = type; // Set a new property to identify this object
-                // domEvents.addEventListener(o, 'click', function (event) {
-                //     add_click_touch(o);
 
-                // }, false);
-                // domEvents.addEventListener(o, 'touchstart', function (event) {
-                //     add_click_touch(o);
-                // }, false);
-                // domEvents.addEventListener(o, 'mouseover', function (event) {
-                //     for (const mesh of selectedPlaces) {
-                //         if (mesh.place == o.nameID && mesh.activated == false) {
-                //             new_mtl1 = new THREE.MeshPhongMaterial({
-                //                 color: parseInt('0xdaffa3'),
-                //                 shininess: 1
-                //             });
-                //             setMaterial(theModel, type, new_mtl1);
-                //             // setTimeout(function () {
-                //             //   setMaterial(theModel, type, INITIAL_MTL);
-                //             // }, 300);
-                //         }
-                //     }
-
-                // }, false);
-
-                // domEvents.addEventListener(o, 'mouseout', function (event) {
-                //     for (const mesh of selectedPlaces) {
-                //         if (mesh.place == o.nameID && mesh.activated == false) {
-                //             setTimeout(function () {
-                //                 setMaterial(theModel, type, INITIAL_MTL);
-                //             }, 50);
-                //         }
-                //     }
-
-                // }, false);
             }
         }
     });
@@ -319,14 +393,14 @@ scene.add(floor);
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI;
 controls.minPolarAngle = Math.PI / 30;
-
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.minDistance = 3;
 controls.maxDistance = 25;
 controls.dampingFactor = 0.04;
-controls.autoRotate = false;
-controls.autoRotateSpeed = 0.8; // 30
+controls.rotateSpeed = 0.6;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 1; // 30
 controls.target = new THREE.Vector3(0, 5, 0);
 
 
@@ -337,6 +411,7 @@ function onMouseClick(event) {
     var rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
     mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
 
     raycaster.setFromCamera(mouse, camera);
     var intersects = raycaster.intersectObjects(objectss);
@@ -372,16 +447,16 @@ function onTouchClick(event) {
 
 function hoverMesh(mesh) {
     for (let obj of selectedPlaces) {
-        if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
+        if (obj.name == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
             setMaterial(theModel, mesh.nameID, hover_color);
             lastHovered = obj;
             obj.hovered = true;
 
-        } else if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
+        } else if (obj.name != mesh.nameID && obj.activated == false && obj.hovered == true) {
             setTimeout(function () {
                 obj.hovered = false;
-                setMaterial(theModel, obj.place, INITIAL_MTL);
+                setMaterial(theModel, obj.name, INITIAL_MTL);
             }, 50);
         }
     }
@@ -396,15 +471,26 @@ function onMouseMove(event) {
     var rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
     mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
     raycaster.setFromCamera(mouse, camera);
     var intersects = raycaster.intersectObjects(objectss);
     if (intersects.length > 0) {
         hoverMesh(intersects[0].object);
     } else if (lastHovered != undefined && lastHovered.activated == false) {
-        setMaterial(theModel, lastHovered.place, INITIAL_MTL);
+        setMaterial(theModel, lastHovered.name, INITIAL_MTL);
     }
 }
 
+function eraseAll() {
+
+    for (let obj of selectedPlaces) {
+        setMaterial(theModel, obj.name, INITIAL_MTL);
+        obj.dolore = init.nome_dolore;
+        obj.activated = false;
+        obj.hovered = false;
+
+    }
+}
 
 function changeCamPosition(event) {
     event.preventDefault();
@@ -428,16 +514,53 @@ canvas.addEventListener('contextmenu', changeCamPosition, false);
 
 
 
-var text2 = document.createElement('div');
-text2.setAttribute("id", "instructions");
-text2.style.position = 'absolute';
-//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 
 
-text2.innerHTML = instructions;
-text2.style.top = 10 + 'px';
-text2.style.left = 5 + 'px';
-// document.body.appendChild(text2);
+$(document).ready(function () {
+
+
+
+    $('.modal').on('hidden.bs.modal', function (e) {
+        clickable = false;
+        console.log("Closed");
+        home_page_canvas.appendChild(renderer.domElement);
+
+        canvas.style.position = "relative";
+        canvas.style.top = "1%";
+        // canvas.style.left = "30%";
+        canvas.style.zIndex = "500";
+        controls.autoRotate = true;
+    });
+
+    $('.modal').on('shown.bs.modal', function (e) {
+        clickable = true;
+        eraseAll();
+        let taccuino_modal = document.getElementById("taccuino");
+        taccuino_modal.style.height = "85%";
+        controls.autoRotate = false;
+
+
+        let a = insertCanvas.appendChild(renderer.domElement);
+
+        let homeCanvas = document.getElementsByClassName("homeCanvas")[0];
+        let modalCanvas = document.getElementsByClassName("modalCanvass")[0];
+
+        homeCanvas.style.zIndex = "1";
+        modalCanvas.style.zIndex = "500";
+
+        canvas.style.position = "relative";
+        canvas.style.width = "50 %";
+        canvas.style.height = "80 %";
+        canvas.style.display = "block";
+        canvas.style.top = "10";
+        canvas.style.left = "0px";
+
+
+    });
+
+});
+
+
 
 
 function animate() {
@@ -456,11 +579,8 @@ function animate() {
 
     if (theModel != null && loaded == false) {
         initialRotation();
-        // DRAG_NOTICE.classList.add('start');
     }
-    // else {
-    //    DRAG_NOTICE.classList.add('move');
-    // }
+
 }
 
 
@@ -483,7 +603,7 @@ function resizeRendererToDisplaySize(renderer) {
         // console.log("Width Is: " + width + " and Height Is:" + height);
 
 
-        renderer.setSize(500, 300);
+        renderer.setSize(550, 860);
         // renderer.setSize(width / 2, height / 2);
     }
     return needResize;
@@ -494,14 +614,16 @@ function resizeRendererToDisplaySize(renderer) {
 
 
 function setMaterial(parent, type, mtl) {
-    parent.traverse(o => {
-        if (o.isMesh && o.nameID != null) {
+    if (clickable) {
+        parent.traverse(o => {
+            if (o.isMesh && o.nameID != null) {
 
-            if (o.nameID == type) {
-                o.material = mtl;
+                if (o.nameID == type) {
+                    o.material = mtl;
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 
@@ -511,8 +633,8 @@ function initialRotation() {
 
 
     initRotate++;
-    if (initRotate <= 120) {
-        theModel.rotation.y += Math.PI / 60;
+    if (initRotate <= 170) {
+        theModel.rotation.y += Math.PI / 90;
     } else {
         loaded = true;
     }
