@@ -5,10 +5,10 @@ Is possible to move camera to navigate the 3D scene, so it's possible to drag wi
 
 
 # Screenshots
-1. ![Alt text](/VIDEO and IMAGES/img1.png?raw=true)
+1. ![Alt text](/VIDEO/img1.png?raw=true)
 
-2. ![Alt text](/VIDEO and IMAGES/img2.png?raw=true)
+2. ![Alt text](/VIDEO/img2.png?raw=true)
 
-3. ![Alt text](/VIDEO and IMAGES/img3.png?raw=true)
+3. ![Alt text](/VIDEO/img3.png?raw=true)
 
-4. ![Alt text](/VIDEO and IMAGES/img4.png?raw=true)
+4. ![Alt text](/VIDEO/img4.png?raw=true)
