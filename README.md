@@ -3,6 +3,8 @@ An editor to change in real time 3D objects properties
 
 Is possible to move camera to navigate the 3D scene, so it's possible to drag with mouse and from mobile.
 
+# Video
+Check the video in dir VIDEO
 
 # Screenshots
 1. ![Alt text](/VIDEO/img1.png?raw=true)
