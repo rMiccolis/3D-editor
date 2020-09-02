@@ -1,9 +1,8 @@
-//file uguale a script.js ma l'highlight delle parti è fatto da me senza uso della
-//libreria THREEx per "allenarmi" e capire il funzionamento di raycaster
-
-console.log(`${window.innerWidth}  ${window.innerHeight}`);
+let clickable = true;
 
 
+let rendererWidth;
+let rendererHeight;
 let device = "PC";
 
 if (navigator.userAgent.match(/Android/i)
@@ -16,62 +15,185 @@ if (navigator.userAgent.match(/Android/i)
     device = "mobile";
 }
 
-//camera position to swap used in ChangeCameraPosition
+//camera positions to swap, used in ChangeCameraPosition()
 let targetMid = new THREE.Vector3(0, 5, 0);
 let targetUp = new THREE.Vector3(0, 9, 0);
 let targetDown = new THREE.Vector3(0, 0, 0);
 
-
-const LOADER = document.getElementById('js-loader');
-
-const TRAY = document.getElementById('js-tray-slide');
-const DRAG_NOTICE = document.getElementById('js-drag-notice');
 
 //objects to add listners to each mesh
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
 
-hover_color = new THREE.MeshPhongMaterial({
-    color: parseInt('0xdaffa3'),
-    shininess: 10
-});
-
-selected_color = new THREE.MeshPhongMaterial({
-    color: parseInt('0x00FF00'),
-    shininess: 10
-});
-
-// Initial material
+// theModel Initial material 
 const INITIAL_MTL = new THREE.MeshPhongMaterial({
     color: 0xf1f1f1,
     shininess: 10
 });
 
 
+//variables containing mesh color material based on pain felt by patient
+const nessun_dolore = new THREE.MeshPhongMaterial({
+    color: parseInt('0x00FF00'),
+    shininess: 10
+});
+
+const dolore_lieve = new THREE.MeshPhongMaterial({
+    color: parseInt('0x80ccff'),
+    shininess: 10
+});
+
+const dolore_moderato = new THREE.MeshPhongMaterial({
+    color: parseInt('0x2323d2'),
+    shininess: 10
+});
+
+const dolore_intenso = new THREE.MeshPhongMaterial({
+    color: parseInt('0x8a2070'),
+    shininess: 10
+});
+
+const dolore_forte = new THREE.MeshPhongMaterial({
+    color: parseInt('0x7a0026'),
+    shininess: 10
+});
+
+const dolore_molto_forte = new THREE.MeshPhongMaterial({
+    color: parseInt('0xff0000'),
+    shininess: 10
+});
+
+const hover_color = new THREE.MeshPhongMaterial({
+    color: parseInt('0xdaffa3'),
+    shininess: 10
+});
+
+//variable containing the selected color by the user
+let selected_color = {
+    "nome_dolore": "nessun_dolore",
+    "material": nessun_dolore
+}
+
+//function used inside taccuino.blade to let the user select the color wanted
+function changeSelectedColor(color) {
+    switch (color) {
+        case '#00ff00':
+            selected_color = {
+                "nome_dolore": "nessun_dolore",
+                "material": nessun_dolore
+            };
+            break;
+        case '#ffffff':
+            selected_color = {
+                "nome_dolore": "dolore_lieve",
+                "material": dolore_lieve
+            };
+            break;
+        case '#2323d2':
+            selected_color = {
+                "nome_dolore": "dolore_moderato",
+                "material": dolore_moderato
+            };
+            break;
+        case '#8a2070':
+            selected_color = {
+                "nome_dolore": "dolore_intenso",
+                "material": dolore_intenso
+            };
+            break;
+        case '#7a0026':
+            selected_color = {
+                "nome_dolore": "dolore_forte",
+                "material": dolore_forte
+            };
+            break;
+        case '#ff0000':
+            selected_color = {
+                "nome_dolore": "dolore_molto_forte",
+                "material": dolore_molto_forte
+            };
+            break;
+        default:
+            selected_color = {
+                "nome_dolore": "nessun_dolore",
+                "material": nessun_dolore
+            };
+    }
+
+};
+
+
+//function used inside dolore.js. to understand which color to assign to the reading mesh
+function readSelectedColor(selected_color) {
+    let color;
+    switch (selected_color) {
+        case 'nessun_dolore':
+            color = nessun_dolore;
+            break;
+        case 'dolore_lieve':
+            color = dolore_lieve;
+            break;
+        case 'dolore_moderato':
+            color = dolore_moderato;
+            break;
+        case 'dolore_intenso':
+            color = dolore_intenso;
+            break;
+        case 'dolore_forte':
+            color = dolore_forte;
+            break;
+        case 'dolore_molto_forte':
+            color = dolore_molto_forte;
+            break;
+        default:
+            color = INITIAL_MTL;
+    }
+    return color;
+};
+
+//initial selected color (white)
+let init = {
+    'nome_dolore': 'INITIAL_MTL',
+    'material': INITIAL_MTL
+};
+
+//variable that will point to the 3D model
 var theModel;
 
 
-const MODEL_PATH = "finished.glb";
-let numberOfMeshes = 2000;
+const MODEL_PATH = "Man_3D.glb";
+
+let numberOfMeshes = 1512; //unused
 
 
 
-var activeOption = 'nd';
+//variable to understand if initial rotation has ended
 var loaded = false;
 
+//number of activated meshes, unused but may be useful in future
 let activated = 0;
+
+/* array of json containing additional info about meshes on the 3D man
+*  each json object in the array contains:
+*  - name (the name of the mesh)
+*  - activated (indicates if the mesh has been clicked or not)
+*  - hovered (indicates if the mouse pointer just went on the mesh without clicking it)
+*  - dolore (the name of the pain indicated by user on the RESP)
+*/
+
 selectedPlaces = [
 ];
 
 
-//const BACKGROUND_COLOR = 0xf1f1f1;
+
 const BACKGROUND_COLOR = 0x9DBAFF;
 // Init the scene
 const scene = new THREE.Scene();
 // Set background
 scene.background = new THREE.Color(BACKGROUND_COLOR);
 scene.fog = new THREE.Fog(BACKGROUND_COLOR, 1, 100);
+
 
 const canvas = document.querySelector('#c');
 
@@ -81,9 +203,18 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.shadowMap.enabled = true;
 renderer.setPixelRatio(window.devicePixelRatio);
 
+
+
+//appending renderer in the same div element of the canvas
+document.body.appendChild(renderer.domElement);
+
+
+
+
+
+//set the max distance from the man inside the 3D scene
 var cameraFar = 15;
 
-document.body.appendChild(renderer.domElement);
 
 // Add a camerra
 var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -92,40 +223,29 @@ camera.position.x = 2;
 camera.position.y = 8;
 
 
-
-
-
+//array containing json of meshes containing only INITIAL mesh name and the material to be set
 const INITIAL_MAP = [
 
 ];
 
+//array containing mesh objects to be passed to the raycaster method to work properly
+let mesh_objects = [];
 
-for (let i = 0; i < numberOfMeshes; i++) {
-    if (i < 10) {
-        nameOb = "a00" + i.toString();
-    } else if (i >= 10 && i < 100) {
-        nameOb = "a0" + i.toString();
-    } else {
-        nameOb = "a" + i.toString();
-    }
-    INITIAL_MAP.push({ childID: nameOb, mtl: INITIAL_MTL });
-    selectedPlaces.push({ place: nameOb, activated: false, hovered: false });
-}
-
-let objectss = [];
-let currentSelected;
 // Init the object loader
 var loader = new THREE.GLTFLoader();
 
+//loads the model
 loader.load(MODEL_PATH, function (gltf) {
     theModel = gltf.scene;
-    console.log(theModel.children.length);
-    theModel.traverse(o => {
+    // console.log(theModel.children.length);
+    theModel.traverse(o => { //this function iterates over each object of the model
         if (o.isMesh) {
 
             o.castShadow = true;
             o.receiveShadow = true;
-            objectss.push(o);
+            INITIAL_MAP.push({ childID: o.name, mtl: INITIAL_MTL });
+            mesh_objects.push(o);
+            selectedPlaces.push({ name: o.name, activated: false, hovered: false, dolore: init.nome_dolore });
         }
     });
 
@@ -145,52 +265,39 @@ loader.load(MODEL_PATH, function (gltf) {
     // Add the model to the scene
     scene.add(theModel);
 
-    // Remove the loader
-    LOADER.remove();
 
 }, undefined, function (error) {
     console.error(error);
 });
 
 
-//function to add event listner from smartphone and pc
-//on each mesh of theModel
-//object is the mesh inside the collection of meshes in theModel
+//function to manage left click (or tap from mobile) on the model
+//object is the mesh clicked on theModel
 let add_click_touch = function (object) {
 
     let i = 0;
-    // let options = document.querySelectorAll(".option");
-    // let options2 = document.querySelectorAll(".option2");
-    // -let temp;
+
     while (i < selectedPlaces.length) {
 
-        if (selectedPlaces[i].place == object.nameID) {
-            // for (opt of options) {
-            //   if (opt.classList.contains(object.nameID)) {
-            //     temp = opt;
-            //   }
-            // }
+        if (selectedPlaces[i].name == object.nameID) { //if nameID is undefined, use object.name
 
-            // for (opt of options2) {
-            //   if (opt.classList.contains(object.nameID)) {
-            //     temp = opt;
-            //   }
-            // }
 
             if (selectedPlaces[i].activated == true) {
                 selectedPlaces[i].activated = false;
                 selectedPlaces[i].hovered = false;
-                //temp.classList.remove('--is-activated');
+
                 activated--;
-                //temp.classList.add('hide');
+
                 setMaterial(theModel, object.nameID, INITIAL_MTL);
+                selectedPlaces[i].dolore = init.nome_dolore;
             } else {
                 selectedPlaces[i].activated = true;
                 selectedPlaces[i].hovered = false;
-                //temp.classList.add('--is-activated');
+
                 activated++;
-                //temp.classList.remove('hide');
-                setMaterial(theModel, object.nameID, selected_color);
+
+                setMaterial(theModel, object.nameID, selected_color.material);
+                selectedPlaces[i].dolore = selected_color.nome_dolore;
             }
             break;
         }
@@ -203,51 +310,16 @@ function initColor(parent, type, mtl) {
     parent.traverse(o => {
         if (o.isMesh) {
             if (o.name.includes(type)) {
-                new_mtl = new THREE.MeshPhongMaterial({
-                    color: parseInt('0x00FE32'),
-                    shininess: 10
-                });
+
                 o.material = mtl;
                 o.nameID = type; // Set a new property to identify this object
-                // domEvents.addEventListener(o, 'click', function (event) {
-                //     add_click_touch(o);
 
-                // }, false);
-                // domEvents.addEventListener(o, 'touchstart', function (event) {
-                //     add_click_touch(o);
-                // }, false);
-                // domEvents.addEventListener(o, 'mouseover', function (event) {
-                //     for (const mesh of selectedPlaces) {
-                //         if (mesh.place == o.nameID && mesh.activated == false) {
-                //             new_mtl1 = new THREE.MeshPhongMaterial({
-                //                 color: parseInt('0xdaffa3'),
-                //                 shininess: 1
-                //             });
-                //             setMaterial(theModel, type, new_mtl1);
-                //             // setTimeout(function () {
-                //             //   setMaterial(theModel, type, INITIAL_MTL);
-                //             // }, 300);
-                //         }
-                //     }
-
-                // }, false);
-
-                // domEvents.addEventListener(o, 'mouseout', function (event) {
-                //     for (const mesh of selectedPlaces) {
-                //         if (mesh.place == o.nameID && mesh.activated == false) {
-                //             setTimeout(function () {
-                //                 setMaterial(theModel, type, INITIAL_MTL);
-                //             }, 50);
-                //         }
-                //     }
-
-                // }, false);
             }
         }
     });
 }
 
-// Add lights
+// Add lights to the scene
 var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
 hemiLight.position.set(0, 50, 0);
 // Add hemisphere light to scene   
@@ -279,7 +351,6 @@ var floorMaterial = new THREE.MeshPhongMaterial({
     shininess: 0
 });
 
-
 var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -0.5 * Math.PI;
 floor.receiveShadow = true;
@@ -290,75 +361,60 @@ scene.add(floor);
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI;
 controls.minPolarAngle = Math.PI / 30;
-
 controls.enableDamping = true;
 controls.enablePan = false;
-controls.minDistance = 8;
+controls.minDistance = 3;
 controls.maxDistance = 25;
 controls.dampingFactor = 0.04;
+controls.rotateSpeed = 0.8;
 controls.autoRotate = false;
-controls.autoRotateSpeed = 0.8; // 30
+controls.autoRotateSpeed = 0.5; // 30
 controls.target = new THREE.Vector3(0, 5, 0);
+controls.mouseButtons = {
+    LEFT: THREE.MOUSE.PAN,
+    // MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.ROTATE
+}
 
 
-
+//function to manage click onto the 3D man
 function onMouseClick(event) {
+    event.preventDefault();
+    lastEventWas3D = 1;
     // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     // mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
     var rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
     mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
+
     raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(objectss);
+    var intersects = raycaster.intersectObjects(mesh_objects);
 
     if (intersects.length > 0) {
         add_click_touch(intersects[0].object);
     }
 }
 
-function onTouchClick(event) {
-    if (event.targetTouches.length == 3) {
-        if (controls.target.y == targetMid.y) {
-            controls.target.y = targetUp.y;
-        } else if (controls.target.y == targetUp.y) {
-            controls.target.y = targetDown.y;
-        } else {
-            controls.target.y = targetMid.y;
-        }
-        controls.update();
-        return false;
-    }
-
-    mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-    mouse.y = - (event.touches[0].clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(objectss);
-
-    if (intersects.length > 0) {
-        add_click_touch(intersects[0].object);
-    }
-}
-
-
+//function to highlight meshes when mouse is over them
 function hoverMesh(mesh) {
     for (let obj of selectedPlaces) {
-        if (obj.place == mesh.nameID && obj.activated == false && obj.hovered == false) {
+        if (obj.name == mesh.nameID && obj.activated == false && obj.hovered == false) {
 
             setMaterial(theModel, mesh.nameID, hover_color);
             lastHovered = obj;
             obj.hovered = true;
 
-        } else if (obj.place != mesh.nameID && obj.activated == false && obj.hovered == true) {
+        } else if (obj.name != mesh.nameID && obj.activated == false && obj.hovered == true) {
             setTimeout(function () {
                 obj.hovered = false;
-                setMaterial(theModel, obj.place, INITIAL_MTL);
+                setMaterial(theModel, obj.name, INITIAL_MTL);
             }, 50);
         }
     }
 }
 
-
+//variable that stores the last hovered mesh
 let lastHovered;
 function onMouseMove(event) {
 
@@ -367,35 +423,156 @@ function onMouseMove(event) {
     var rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
     mouse.y = - ((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
     raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(objectss);
+    var intersects = raycaster.intersectObjects(mesh_objects);
     if (intersects.length > 0) {
         hoverMesh(intersects[0].object);
     } else if (lastHovered != undefined && lastHovered.activated == false) {
-        setMaterial(theModel, lastHovered.place, INITIAL_MTL);
+        setMaterial(theModel, lastHovered.name, INITIAL_MTL);
     }
 }
 
+//function to set all meshes to the white color
+function eraseAll() {
 
-function changeCamPosition(event) {
-    event.preventDefault();
+    for (let obj of selectedPlaces) {
+        setMaterial(theModel, obj.name, INITIAL_MTL);
+        obj.dolore = init.nome_dolore;
+        obj.activated = false;
+        obj.hovered = false;
+
+    }
+}
+
+//function to swap camera position on three different height levels
+function changeCamPosition() {
+    lastEventWas3D = 1;
     if (controls.target.y == targetMid.y) {
         controls.target.y = targetUp.y;
     } else if (controls.target.y == targetUp.y) {
         controls.target.y = targetDown.y;
     } else {
-
-
         controls.target.y = targetMid.y;
     }
     controls.update();
-    return false;
+    // return false;
 }
 
+
+//if the last object clicked was the 3D canvas, then deactivate right
+//click to open context menu
+function preventAction(e) {
+    if (lastEventWas3D) {
+        e.preventDefault();
+    }
+    // if ($('#c').is(":visible")) {
+    //     e.preventDefault();
+    // }
+
+}
+
+//variable to count how many right click have been pressed
+//to know if user double clicked
+var countRightClick = 0;
+//changes cam position if double right click or mouse wheel were pressed
+function DoubleRightClickScroll(event) {
+    lastEventWas3D = 1;
+    if (event.button == 1 || event.button == 4) { //event.button = 1 means scroll mouse button was pressed (4 on internet explorer)
+        changeCamPosition();
+        return false;
+    }
+    if (event.button == 2) {//event.button = 2 means right click
+        countRightClick++;
+        setTimeout(resetRightClick, 200);
+        if (countRightClick > 1) {
+            changeCamPosition();
+            resetRightClick();
+        }
+    }
+    return false;
+
+}
+function resetRightClick() {
+    countRightClick = 0;
+}
+
+//variable to keep track if user double taps on screen
+var countTouchStart = 0;
+
+//mesh to be deactivated cause of accidental tap (zoom or double click)
+var lastActivated;
+
+//function to swap camera with double tap and select meshes on 3D model from mobile
+function onTouchClick(event) {
+
+    var rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.targetTouches[0].clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = - ((event.targetTouches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
+    // mouse.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+    // mouse.y = - (event.touches[0].pageY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(mesh_objects);
+
+
+    //means that user is zooming, so we don't want mesh to be activated
+    if (event.touches.length == 2 && intersects.length > 0 && lastActivated) {
+
+        setMaterial(theModel, lastActivated.nameID, INITIAL_MTL);
+
+        return false;
+    }
+
+    countTouchStart++;
+    setTimeout(resetTouchStart, 120);
+    if (countTouchStart > 1 && event.touches.length == 1) {
+        //means that double tap has been fired and deactivating the accidental activated mesh
+        if (lastActivated) {
+            setMaterial(theModel, lastActivated.nameID, INITIAL_MTL);
+        }
+        changeCamPosition();
+        resetTouchStart();
+        return false;
+    }
+
+
+
+    if (intersects.length > 0) {
+        add_click_touch(intersects[0].object);
+        lastActivated = intersects[0].object;
+    }
+}
+
+function resetTouchStart() {
+    countTouchStart = 0;
+}
+//is == 1 if last click was pressed on the 3D canvas
+var lastEventWas3D = 0;
+
+function addLastEventWas3D(event) {
+    lastEventWas3D = 1;
+}
+
+
+function showHideContextMenu(event) {
+    if (event.target.id != "c") {
+        lastEventWas3D = 0;
+    }
+}
+
+canvas.addEventListener('mousedown', DoubleRightClickScroll, false);
 canvas.addEventListener('click', onMouseClick, false);
+canvas.addEventListener('contextmenu', addLastEventWas3D, false);
 canvas.addEventListener('touchstart', onTouchClick, false);
 canvas.addEventListener('mousemove', onMouseMove, false);
-canvas.addEventListener('contextmenu', changeCamPosition, false);
+document.body.addEventListener('contextmenu', preventAction, false);
+document.body.addEventListener('click', showHideContextMenu, false);
+
+
+
+
+
 
 
 function animate() {
@@ -406,25 +583,20 @@ function animate() {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
     }
+
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 
 
 
     if (theModel != null && loaded == false) {
-        let h2_advice = document.getElementById("device");
-        if (device == "PC") {
-            h2_advice.innerHTML = "Right click to change view";
-        } else {
-            h2_advice.innerHTML = "Tap with three fingers to change view";
-        }
         initialRotation();
-        DRAG_NOTICE.classList.add('start');
-    } else {
-        DRAG_NOTICE.classList.add('move');
     }
+
 }
 
+
+let initRotate = 0;
 animate();
 
 // Function - New resizing method
@@ -437,36 +609,40 @@ function resizeRendererToDisplaySize(renderer) {
 
     const needResize = canvasPixelWidth !== width || canvasPixelHeight !== height;
     if (needResize) {
-
-        renderer.setSize(width, height, false);
+        if (device == "mobile") {
+            renderer.setSize(rendererWidth, rendererHeight);
+            return needResize;
+        }
+        // renderer.setSize(900, 900);
+        renderer.setSize(width, height);
     }
     return needResize;
 }
 
 
-//var domEvents = new THREEx.DomEvents(camera, renderer.domElement);
-
-
+//function to change material or color of a mesh
 function setMaterial(parent, type, mtl) {
-    parent.traverse(o => {
-        if (o.isMesh && o.nameID != null) {
+    if (clickable) {
+        parent.traverse(o => {
+            if (o.isMesh && o.nameID != null) {
 
-            if (o.nameID == type) {
-                o.material = mtl;
+                if (o.nameID == type) {
+                    o.material = mtl;
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 
+
 // Function - Opening rotate
-let initRotate = 0;
 function initialRotation() {
 
 
     initRotate++;
-    if (initRotate <= 120) {
-        theModel.rotation.y += Math.PI / 60;
+    if (initRotate <= 175) {
+        theModel.rotation.y += Math.PI / 90;
     } else {
         loaded = true;
     }

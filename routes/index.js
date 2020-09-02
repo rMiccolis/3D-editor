@@ -15,7 +15,7 @@ router.get('/', function (req, res, next) {
     + currentdate.getSeconds() + "\n";
   console.log('\x1b[33m', `\n\nConnection from IP: ${req.connection.remoteAddress}`);
   console.log(datetime);
-  res.render('index');
+  res.render('index.ejs');
 });
 
 module.exports = router;
